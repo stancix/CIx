@@ -21,7 +21,7 @@ fi
 EXPECTED_RELEASE="
 \`${VERSION}\`
 | [GitHub](https://github.com/${REP_OWNER}/${REP_NAME}/releases/tag/${VERSION})
-| [Key](https://${REP_OWNER}.github.io/release-public.pem"
+| [Key](https://${REP_OWNER}.github.io/release-public.pem)"
 
 EXPECTED_BUILD_AND_INSTALL="
 $ ./assemble.sh \\
