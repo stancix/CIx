@@ -1,48 +1,35 @@
 #!/usr/local/bin/bash
 
-ISSUER='build/yml/metadata.yml'
-if [[ ! -f "${ISSUER}" ]]; then
- echo "No file \"${ISSUER}\"!"; exit 1
-elif [[ ! -s "${ISSUER}" ]]; then
- echo "File \"${ISSUER}\" is empty!"; exit 1
-fi
+SUBJECT='build/yml/metadata.yml'
+. $asserts/files/not_empty.sh "${SUBJECT}"
 
-VERSION="$(yq -Mer -p=yml -o=json .version "${ISSUER}")" || exit 1
-REP_OWNER="$(yq -Mer -p=yml -o=json .repository.owner "${ISSUER}")" || exit 1
-REP_NAME="$(yq -Mer -p=yml -o=json .repository.name "${ISSUER}")" || exit 1
+VERSION="$(yq -Mer -p=yml -o=json .version "${SUBJECT}")" || exit 1
+REP_OWNER="$(yq -Mer -p=yml -o=json .repository.owner "${SUBJECT}")" || exit 1
+REP_NAME="$(yq -Mer -p=yml -o=json .repository.name "${SUBJECT}")" || exit 1
 
-ISSUER='README.md'
-if [[ ! -f "${ISSUER}" ]]; then
- echo "No file \"${ISSUER}\"!"; exit 1
-elif [[ ! -s "${ISSUER}" ]]; then
- echo "File \"${ISSUER}\" is empty!"; exit 1
-fi
+SUBJECT='README.md'
+. $asserts/files/not_empty.sh "${SUBJECT}"
 
-EXPECTED_RELEASE="
-\`${VERSION}\`
+EXPECTED_NAME="# ${REP_NAME}"
+
+EXPECTED_RELEASE="\`${VERSION}\`
 | [GitHub](https://github.com/${REP_OWNER}/${REP_NAME}/releases/tag/${VERSION})
 | [Key](https://${REP_OWNER}.github.io/release-public.pem)"
 
-EXPECTED_BUILD_AND_INSTALL="
-$ ./assemble.sh \\
+EXPECTED_BUILD_AND_INSTALL="$ ./assemble.sh \\
  && ./src/test/bash/unit_test.sh \\
  && unzip -d /opt/${REP_NAME}-${VERSION} ./build/zip/${REP_NAME}-${VERSION}.zip"
 
-EXPECTED_DOWNLOAD_AND_INSTALL="
-$ TMP_PATH=\"\$(mktemp)\"; \\
+EXPECTED_DOWNLOAD_AND_INSTALL="$ TMP_PATH=\"\$(mktemp)\"; \\
  curl -L 'https://github.com/${REP_OWNER}/${REP_NAME}/releases/download/${VERSION}/${REP_NAME}-${VERSION}.zip' \\
   -o \"\${TMP_PATH}\" && unzip -d /opt/${REP_NAME}-${VERSION} \"\${TMP_PATH}\" && rm \"\${TMP_PATH}\""
 
-ACTUAL_TEXT="$(< "${ISSUER}")"
 EXPECTED_TEXTS=(
+ "${EXPECTED_NAME}"
  "${EXPECTED_RELEASE}"
  "${EXPECTED_BUILD_AND_INSTALL}"
  "${EXPECTED_DOWNLOAD_AND_INSTALL}"
 )
 for EXPECTED_TEXT in "${EXPECTED_TEXTS[@]}"; do
- if [[ "${ACTUAL_TEXT}" != *"${EXPECTED_TEXT}"* ]]; then
-  echo "File \"${ISSUER}\" does not contain:
- ---
- ${EXPECTED_TEXT}
- ---"; exit 1; fi
+ . $asserts/files/contains.sh "${SUBJECT}" "${EXPECTED_TEXT}"
 done
