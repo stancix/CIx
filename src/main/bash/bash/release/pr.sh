@@ -1,6 +1,7 @@
 #!/usr/local/bin/bash
 
 . $cix/gh/check_rates.sh
+. $cix/gh/checkout.sh
 
 # todo checkout
 
