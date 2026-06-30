@@ -1,7 +1,7 @@
 #!/usr/local/bin/bash
 
-REP_OWNER='stanbashx'
-REP_NAME='Bashx.CIx'
+REP_OWNER='kepocnhh'
+REP_NAME='CIx'
 VERSION='0.0.1'
 
 if [[ -d 'build' ]]; then
