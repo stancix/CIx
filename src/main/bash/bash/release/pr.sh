@@ -11,6 +11,12 @@ $cix/gh/config.sh \
 
 . $cix/git/merge.sh
 
+$cix/bash/assemble.sh \
+ || . $checks/fail.sh 'Bash assemble error!'
+
+$cix/bash/commit.sh \
+ || . $checks/fail.sh 'Bash commit error!'
+
 echo 'Not implemented!'; exit 1 # todo
 
 # todo checks
