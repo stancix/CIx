@@ -39,4 +39,22 @@ CIX_ACTUAL_KEY_ID="${CIX_ACTUAL_KEYS[4]}"
 
 #
 
+SUBJECT="${CIX_SHARED}/gh_user.json"
+
+$ghx/user.sh GITHUB_WORKER_PAT "${SUBJECT}" \
+ || . $checks/fail.sh 'Get worker error!'
+
+CIX_USER_NAME="$(yq -Mer '.name' "${SUBJECT}")" \
+ || . $checks/fail.sh 'Get user name error!'
+
+CIX_USER_ID="$(yq -Mer '.id' "${SUBJECT}")" \
+ || . $checks/fail.sh 'Get user ID error!'
+
+CIX_USER_LOGIN="$(yq -Mer '.login' "${SUBJECT}")" \
+ || . $checks/fail.sh 'Get user login error!'
+
+CIX_USER_EMAIL="${CIX_USER_ID}+${CIX_USER_LOGIN}@users.noreply.github.com"
+
+#
+
 echo 'Not implemented!'; exit 1 # todo
