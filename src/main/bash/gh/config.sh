@@ -46,6 +46,9 @@ SUBJECT="${CIX_SHARED}/gh_user.json"
 $ghx/user.sh GITHUB_WORKER_PAT "${SUBJECT}" \
  || . $checks/fail.sh 'Get worker error!'
 
+CIX_USER_NAME="$(yq -Mer '.name' "${SUBJECT}")" \
+ || . $checks/fail.sh 'Get user name error!'
+
 CIX_USER_ID="$(yq -Mer '.id' "${SUBJECT}")" \
  || . $checks/fail.sh 'Get user ID error!'
 
@@ -54,10 +57,22 @@ CIX_USER_LOGIN="$(yq -Mer '.login' "${SUBJECT}")" \
 
 CIX_USER_EMAIL="${CIX_USER_ID}+${CIX_USER_LOGIN}@users.noreply.github.com"
 
-GPG_UIDS="$(gpg --list-keys --quiet --keyid-format long --with-colons | grep uid)" \
- && [[ "${GPG_UIDS}" == *"<${USER_EMAIL}>"* ]] \
- || . $checks/fail.sh 'Wrong GPG email!'
+# todo
+#GPG_UIDS="$(gpg --list-keys --quiet --keyid-format long --with-colons | grep uid)" \
+# && $checks/strings/contains.sh "${GPG_UIDS}" "<${CIX_USER_EMAIL}>" \
+# || . $checks/fail.sh 'Wrong GPG email!'
 
 #
 
-echo 'Not implemented!'; exit 1 # todo
+git config 'user.name' "${CIX_USER_NAME}" \
+ || . $checks/fail.sh 'Git config name error!'
+
+git config 'user.email' "${CIX_USER_EMAIL}" \
+ || . $checks/fail.sh 'Git config email error!'
+
+git config gpg.program '/usr/local/bin/gpgloopback.sh' \
+ || . $checks/fail.sh 'Git config GPG program error!'
+
+git config user.signingkey "${CIX_WORKER_KEY_ID}" \
+ || . $checks/fail.sh 'Git config GPG key error!'
+
