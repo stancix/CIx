@@ -32,6 +32,19 @@ CIX_SHARED="$(mktemp -d)"
 PATH="${mocks}/curl/bin:${PATH}" \
  CIX_SHARED="${CIX_SHARED}" \
  MOCKS_CURL_HTTP_CODE=200 \
+ MOCKS_CURL_DST='{"resources":{"core":{}}}' \
+ "${SCRIPT}" > "${STDOUT}" 2> "${STDERR}"
+. $asserts/ints/eq.sh "${SCRIPT}" "$?" 1
+. $asserts/files/empty.sh "${STDOUT}"
+. $asserts/files/equals.sh "${STDERR}" $'Check dst error!\nGet limits error!\n'
+rm -r "${CIX_SHARED}"
+
+:> "${STDOUT}"
+:> "${STDERR}"
+CIX_SHARED="$(mktemp -d)"
+PATH="${mocks}/curl/bin:${PATH}" \
+ CIX_SHARED="${CIX_SHARED}" \
+ MOCKS_CURL_HTTP_CODE=200 \
  MOCKS_CURL_DST='{"resources":{"core":{"limit":60,"remaining":8}}}' \
  "${SCRIPT}" > "${STDOUT}" 2> "${STDERR}"
 . $asserts/ints/eq.sh "${SCRIPT}" "$?" 1
