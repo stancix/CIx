@@ -9,6 +9,8 @@ $cix/gh/checkout.sh \
 $cix/gh/config.sh \
  || . $checks/fail.sh 'GitHub config error!'
 
+. $cix/git/merge.sh
+
 echo 'Not implemented!'; exit 1 # todo
 
 # todo checks
