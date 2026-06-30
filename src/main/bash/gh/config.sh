@@ -16,8 +16,9 @@ CIX_WORKER_KEY_ID="$(yq -Mer '.[0].key_id' "${SUBJECT}")" \
 
 #
 
-CIX_FILE_KEYS=($(gpg --show-keys --quiet --keyid-format long --with-colons "${GPG_KEY}" | grep sec))
-. $checks/ints/eq.sh "${#CIX_FILE_KEYS[@]}" 1 'Get file keys error!'
+CIX_FILE_KEYS=($(gpg --show-keys --quiet --keyid-format long --with-colons "${GPG_KEY}" | grep sec)) \
+ && $checks/ints/eq.sh "${#CIX_FILE_KEYS[@]}" 1 \
+ || . $checks/fail.sh 'Get file keys error!'
 
 CIX_FILE_KEYS="${CIX_FILE_KEYS[0]}"
 CIX_FILE_KEYS=(${CIX_FILE_KEYS//:/ })
@@ -29,8 +30,9 @@ CIX_FILE_KEY_ID="${CIX_FILE_KEYS[4]}"
 gpg --batch --quiet --import "${GPG_KEY}" \
  || . $checks/fail.sh 'GPG import error!'
 
-CIX_ACTUAL_KEYS=($(gpg --list-keys --quiet --keyid-format long --with-colons | grep pub))
-. $checks/ints/eq.sh "${#CIX_ACTUAL_KEYS[@]}" 1 'Get actual keys error!'
+CIX_ACTUAL_KEYS=($(gpg --list-keys --quiet --keyid-format long --with-colons | grep pub)) \
+ && $checks/ints/eq.sh "${#CIX_ACTUAL_KEYS[@]}" 1 \
+ || . $checks/fail.sh 'Get file keys error!'
 
 CIX_ACTUAL_KEYS="${CIX_ACTUAL_KEYS[0]}"
 CIX_ACTUAL_KEYS=(${CIX_ACTUAL_KEYS//:/ })
@@ -44,9 +46,6 @@ SUBJECT="${CIX_SHARED}/gh_user.json"
 $ghx/user.sh GITHUB_WORKER_PAT "${SUBJECT}" \
  || . $checks/fail.sh 'Get worker error!'
 
-CIX_USER_NAME="$(yq -Mer '.name' "${SUBJECT}")" \
- || . $checks/fail.sh 'Get user name error!'
-
 CIX_USER_ID="$(yq -Mer '.id' "${SUBJECT}")" \
  || . $checks/fail.sh 'Get user ID error!'
 
@@ -54,6 +53,10 @@ CIX_USER_LOGIN="$(yq -Mer '.login' "${SUBJECT}")" \
  || . $checks/fail.sh 'Get user login error!'
 
 CIX_USER_EMAIL="${CIX_USER_ID}+${CIX_USER_LOGIN}@users.noreply.github.com"
+
+GPG_UIDS="$(gpg --list-keys --quiet --keyid-format long --with-colons | grep uid)" \
+ && [[ "${GPG_UIDS}" == *"<${USER_EMAIL}>"* ]] \
+ || . $checks/fail.sh 'Wrong GPG email!'
 
 #
 
