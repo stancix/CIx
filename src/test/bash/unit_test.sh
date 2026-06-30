@@ -10,7 +10,7 @@ TESTS='src/test/bash'
 
 # todo unit_test.sh -> check_tests.sh
 
-# todo tests
+. ${TESTS}/gh/check_rates_test.sh
 
 . ${TESTS}/check_license.sh
 . ${TESTS}/check_readme.sh
