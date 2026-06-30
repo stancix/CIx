@@ -1,6 +1,6 @@
 #!/usr/local/bin/bash
 
-SUBJECT="${CIX_SHARED}/gh-limits.json"
+SUBJECT="${CIX_SHARED}/gh_limits.json"
 
 $ghx/rate_limit.sh "${SUBJECT}" \
  || . $checks/fail.sh 'Get limits error!'
