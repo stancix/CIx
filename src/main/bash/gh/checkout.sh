@@ -4,7 +4,7 @@
 
 VCS_URL="https://${GITHUB_PAT}@github.com/${VCS_REP_OWNER}/${VCS_REP_NAME}.git"
 
-git init \
+git init --quiet \
  || . $checks/fail.sh 'Git init error!'
 
 git remote add origin "${VCS_URL}" \

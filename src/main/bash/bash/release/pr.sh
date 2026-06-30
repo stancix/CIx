@@ -6,6 +6,9 @@ $cix/gh/check_rates.sh \
 $cix/gh/checkout.sh \
  || . $checks/fail.sh 'GitHub checkout error!'
 
+$cix/gh/config.sh \
+ || . $checks/fail.sh 'GitHub config error!'
+
 echo 'Not implemented!'; exit 1 # todo
 
 # todo checks
