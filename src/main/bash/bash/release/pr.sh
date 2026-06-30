@@ -1,27 +1,25 @@
 #!/usr/local/bin/bash
 
-$cix/gh/check_rates.sh \
- || . $checks/fail.sh 'GitHub check rates error!'
+. $cix/gh/check_rates.sh
 
-$cix/gh/checkout.sh \
- || . $checks/fail.sh 'GitHub checkout error!'
+. $cix/gh/checkout.sh
 
-$cix/gh/config.sh \
- || . $checks/fail.sh 'GitHub config error!'
+. $cix/gh/config.sh
 
 . $cix/git/merge.sh
 
-$cix/bash/assemble.sh \
- || . $checks/fail.sh 'Bash assemble error!'
-
-$cix/bash/commit.sh \
- || . $checks/fail.sh 'Bash commit error!'
-
-$cix/bash/check.sh \
- || . $checks/fail.sh 'Bash check error!'
+. $cix/bash/assemble.sh
 
 echo 'Not implemented!'; exit 1 # todo
 
-# todo checks
+. $cix/bash/commit.sh
+
+. $cix/bash/check.sh
+
+echo 'Not implemented!'; exit 1 # todo
+
+# todo push
 
 # todo release
+
+# todo message

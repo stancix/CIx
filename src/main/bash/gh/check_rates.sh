@@ -2,8 +2,7 @@
 
 SUBJECT="${CIX_SHARED}/gh_limits.json"
 
-$ghx/rate_limit.sh "${SUBJECT}" \
- || . $checks/fail.sh 'Get limits error!'
+. $ghx/rate_limit.sh "${SUBJECT}"
 
 CIX_LIMIT="$(yq -Me -p=json -o=json '.resources.core.limit' "${SUBJECT}" 2> /dev/null)" \
  || . $checks/fail.sh 'Get limit error!'
