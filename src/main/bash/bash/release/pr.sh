@@ -17,6 +17,9 @@ $cix/bash/assemble.sh \
 $cix/bash/commit.sh \
  || . $checks/fail.sh 'Bash commit error!'
 
+$cix/bash/check.sh \
+ || . $checks/fail.sh 'Bash check error!'
+
 echo 'Not implemented!'; exit 1 # todo
 
 # todo checks
