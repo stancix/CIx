@@ -9,7 +9,7 @@ jobs:
     steps:
       - env:
           DOCKER_IMAGE: 'docker.io/kepocnhh/multitool-bash-amd64'
-          DOCKER_IMAGE_DIGEST: 'df0ec5dde1eb550728290153b6bbbe7770b6a4009dbb94a5330bae12f1030a6e'
+          DOCKER_IMAGE_DIGEST: '26d76dbb3324f7e43f01c218064ed33101368375a36654a13bb18ed59b5175f7'
           KEYSTORE_PASSWORD: "${{secrets.KEYSTORE_RELEASE_PASSWORD}}"
           GPG_PASSWORD: "${{secrets.GPG_PASSWORD}}"
         run: |
