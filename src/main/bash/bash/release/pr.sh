@@ -1,9 +1,10 @@
 #!/usr/local/bin/bash
 
-. $cix/gh/check_rates.sh
-. $cix/gh/checkout.sh
+$cix/gh/check_rates.sh \
+ || . $checks/fail.sh 'GitHub check rates error!'
 
-# todo checkout
+$cix/gh/checkout.sh \
+ || . $checks/fail.sh 'GitHub checkout error!'
 
 echo 'Not implemented!'; exit 1 # todo
 
