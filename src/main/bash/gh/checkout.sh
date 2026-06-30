@@ -1,8 +1,8 @@
 #!/usr/local/bin/bash
 
-. $checks/strings/require.sh VCS_REP_OWNER VCS_REP_NAME VCS_SOURCE_COMMIT VCS_TARGET_BRANCH GITHUB_PAT
+. $checks/strings/require.sh VCS_REP_OWNER VCS_REP_NAME VCS_SOURCE_COMMIT VCS_TARGET_BRANCH GITHUB_WORKER_PAT
 
-VCS_URL="https://${GITHUB_PAT}@github.com/${VCS_REP_OWNER}/${VCS_REP_NAME}.git"
+VCS_URL="https://${GITHUB_WORKER_PAT}@github.com/${VCS_REP_OWNER}/${VCS_REP_NAME}.git"
 
 git init --quiet \
  || . $checks/fail.sh 'Git init error!'
