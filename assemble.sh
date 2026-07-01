@@ -1,6 +1,6 @@
 #!/usr/local/bin/bash
 
-REP_OWNER='kepocnhh'
+REP_OWNER='stancix'
 REP_NAME='CIx'
 VERSION='0.0.1'
 
