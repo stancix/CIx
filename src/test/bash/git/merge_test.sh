@@ -14,30 +14,39 @@ STDERR="$(mktemp)"
 
 #
 
-VCS_REP_OWNER='stanuseless'
-VCS_REP_NAME='Useless.Bash'
-
-#
-
 CIX_WORKDIR="$(mktemp -d)"
-VCS_SRC_COMMIT='3f964efe91de6ff69cd630f59fd6c6a811dab76a'
+VCS_SRC_BRANCH='test_src'
 VCS_DST_BRANCH='test_dst'
-VCS_URL="https://github.com/${VCS_REP_OWNER}/${VCS_REP_NAME}.git"
 
 git -C "${CIX_WORKDIR}" init --quiet \
+ && git -C "${CIX_WORKDIR}" config user.name 'foo' --quiet \
+ && git -C "${CIX_WORKDIR}" config user.email 'foo@mail.org' --quiet \
  || . $asserts/fail.sh 'Git init error!'
 
-git -C "${CIX_WORKDIR}" remote add origin "${VCS_URL}" \
- || . $asserts/fail.sh 'Git remotes error!'
+git -C "${CIX_WORKDIR}" checkout -b "${VCS_DST_BRANCH}" --quiet \
+ || . $asserts/fail.sh "Git checkout \"${VCS_DST_BRANCH}\" error!"
 
-git -C "${CIX_WORKDIR}" fetch origin "${VCS_DST_BRANCH}" --quiet \
- || . $asserts/fail.sh "Git fetch \"${VCS_DST_BRANCH}\" error!"
+printf '%s' 'foo' > "${CIX_WORKDIR}/foo.txt"
 
-git -C "${CIX_WORKDIR}" fetch origin "${VCS_SRC_COMMIT}" --quiet \
- || . $asserts/fail.sh "Git fetch \"${VCS_SRC_COMMIT}\" error!"
+git -C "${CIX_WORKDIR}" add . \
+ && git -C "${CIX_WORKDIR}" commit -m 'foo' --quiet \
+ || . $asserts/fail.sh "Git commit error!"
+
+git -C "${CIX_WORKDIR}" checkout -b "${VCS_SRC_BRANCH}" --quiet \
+ || . $asserts/fail.sh "Git checkout \"${VCS_SRC_BRANCH}\" error!"
+
+printf '%s' 'bar' > "${CIX_WORKDIR}/bar.txt"
+
+git -C "${CIX_WORKDIR}" add . \
+ && git -C "${CIX_WORKDIR}" commit -m 'bar' --quiet \
+ || . $asserts/fail.sh "Git commit error!"
+
+VCS_SRC_COMMIT="$(git -C "${CIX_WORKDIR}" rev-parse HEAD)"
 
 git -C "${CIX_WORKDIR}" switch "${VCS_DST_BRANCH}" --quiet \
  || . $asserts/fail.sh "Git switch \"${VCS_DST_BRANCH}\" error!"
+
+#
 
 :> "${STDOUT}"
 :> "${STDERR}"
