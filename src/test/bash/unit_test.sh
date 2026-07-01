@@ -11,6 +11,8 @@ TESTS='src/test/bash'
 # todo unit_test.sh -> check_tests.sh
 
 . ${TESTS}/gh/check_rates_test.sh
+. ${TESTS}/gh/checkout_test.sh
+. ${TESTS}/git/merge_test.sh
 
 . ${TESTS}/check_license.sh
 . ${TESTS}/check_readme.sh
