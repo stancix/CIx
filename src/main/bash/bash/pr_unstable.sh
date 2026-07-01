@@ -20,7 +20,7 @@ echo 'Assemble...'
 
 . $cix/bash/assemble.sh
 
-echo 'Not implemented!'; exit 1 # todo
+echo 'Commit...'
 
 . $cix/bash/commit.sh
 

@@ -60,6 +60,9 @@ CIX_USER_EMAIL="${CIX_USER_ID}+${CIX_USER_LOGIN}@users.noreply.github.com"
 # && $checks/strings/contains.sh "${GPG_UIDS}" "<${CIX_USER_EMAIL}>" \
 # || . $checks/fail.sh 'Wrong GPG email!'
 
+CIX_WORKER_KEY_ID='2AC43613F5502EB3C490D2C62CFF9BD0725E548B' # todo
+CIX_USER_EMAIL='foo@bar.baz' # todo
+
 #
 
 git config 'user.name' "${CIX_USER_NAME}" \
