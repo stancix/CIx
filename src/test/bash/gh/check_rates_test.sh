@@ -23,7 +23,7 @@ PATH="${mocks}/curl/bin:${PATH}" \
  "${SCRIPT}" > "${STDOUT}" 2> "${STDERR}"
 . $asserts/ints/eq.sh "${SCRIPT}" "$?" 1
 . $asserts/files/empty.sh "${STDOUT}"
-. $asserts/files/equals.sh "${STDERR}" $'Request error!\nGet limits error!\n'
+. $asserts/files/equals.sh "${STDERR}" $'Request error!\n'
 rm -r "${CIX_SHARED}"
 
 :> "${STDOUT}"
@@ -35,7 +35,7 @@ PATH="${mocks}/curl/bin:${PATH}" \
  "${SCRIPT}" > "${STDOUT}" 2> "${STDERR}"
 . $asserts/ints/eq.sh "${SCRIPT}" "$?" 1
 . $asserts/files/empty.sh "${STDOUT}"
-. $asserts/files/equals.sh "${STDERR}" $'Response error!\nGet limits error!\n'
+. $asserts/files/equals.sh "${STDERR}" $'Response error!\n'
 rm -r "${CIX_SHARED}"
 
 :> "${STDOUT}"
@@ -48,7 +48,7 @@ PATH="${mocks}/curl/bin:${PATH}" \
  "${SCRIPT}" > "${STDOUT}" 2> "${STDERR}"
 . $asserts/ints/eq.sh "${SCRIPT}" "$?" 1
 . $asserts/files/empty.sh "${STDOUT}"
-. $asserts/files/equals.sh "${STDERR}" $'Check dst error!\nGet limits error!\n'
+. $asserts/files/equals.sh "${STDERR}" $'Check dst error!\n'
 rm -r "${CIX_SHARED}"
 
 :> "${STDOUT}"
