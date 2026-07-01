@@ -12,6 +12,7 @@ TESTS='src/test/bash'
 
 . ${TESTS}/gh/check_rates_test.sh
 . ${TESTS}/gh/checkout_test.sh
+. ${TESTS}/gh/config_keys_test.sh
 . ${TESTS}/git/merge_test.sh
 
 . ${TESTS}/check_license.sh
