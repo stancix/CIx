@@ -1,12 +1,22 @@
 #!/usr/local/bin/bash
 
+echo 'Check rates...'
+
 . $cix/gh/check_rates.sh
+
+echo 'Checkout...'
 
 . $cix/gh/checkout.sh
 
+echo 'Config...'
+
 . $cix/gh/config.sh
 
+echo 'Merge...'
+
 . $cix/git/merge.sh
+
+echo 'Assemble...'
 
 . $cix/bash/assemble.sh
 
