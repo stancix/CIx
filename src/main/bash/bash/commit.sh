@@ -6,8 +6,8 @@ SUBJECT='./build/yml/metadata.yml'
 ACTUAL_VERSION="$(yq -Mer '.version' "${SUBJECT}" 2> /dev/null)" \
  || . $checks/fail.sh 'Get version error!'
 
-. $checks/strings/require.sh ACTUAL_VERSION VCS_TARGET_BRANCH
+. $checks/strings/require.sh ACTUAL_VERSION VCS_DST_BRANCH
 
 #. $mt/gh/tag/test.sh "${VERSION}" # todo
 
-. $cix/git/commit.sh "${ACTUAL_VERSION}" "${VCS_TARGET_BRANCH} <- ${ACTUAL_VERSION}"
+. $cix/git/commit.sh "${ACTUAL_VERSION}" "${VCS_DST_BRANCH} <- ${ACTUAL_VERSION}"
