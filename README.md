@@ -6,8 +6,8 @@ A few continuous integration scripts.
 ## Release
 
 `0.0.1`
-| [GitHub](https://github.com/kepocnhh/CIx/releases/tag/0.0.1)
-| [Key](https://kepocnhh.github.io/release-public.pem)
+| [GitHub](https://github.com/stancix/CIx/releases/tag/0.0.1)
+| [Key](https://stancix.github.io/release-public.pem)
 
 ### Build and Install
 
@@ -21,7 +21,7 @@ $ ./assemble.sh \
 
 ```
 $ TMP_PATH="$(mktemp)"; \
- curl -L 'https://github.com/kepocnhh/CIx/releases/download/0.0.1/CIx-0.0.1.zip' \
+ curl -L 'https://github.com/stancix/CIx/releases/download/0.0.1/CIx-0.0.1.zip' \
   -o "${TMP_PATH}" && unzip -d /opt/CIx-0.0.1 "${TMP_PATH}" && rm "${TMP_PATH}"
 ```
 
