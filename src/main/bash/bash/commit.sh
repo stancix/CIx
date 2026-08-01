@@ -1,7 +1,7 @@
 #!/usr/local/bin/bash
 
 SUBJECT='./build/yml/metadata.yml'
-#. $checks/files/not_empty.sh "${SUBJECT}" # todo
+. $checks/files/not_empty.sh "${SUBJECT}"
 
 ACTUAL_VERSION="$(yq -Mer '.version' "${SUBJECT}" 2> /dev/null)" \
  || . $checks/fail.sh 'Get version error!'

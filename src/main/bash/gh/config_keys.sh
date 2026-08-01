@@ -8,9 +8,7 @@ CIX_WORKER_EMAIL="$3"
 
 . $checks/strings/require.sh CIX_WORKER_KEY_ID CIX_WORKER_KEY CIX_WORKER_EMAIL
 
-[[ -f "${CIX_WORKER_KEY}" ]] \
- || . $checks/fail.sh "File \"${CIX_WORKER_KEY}\" error!"
-#. $checks/files/not_empty.sh "${CIX_WORKER_KEY}" # todo
+. $checks/files/not_empty.sh "${CIX_WORKER_KEY}"
 
 CIX_FILE_KEYS=($(gpg --show-keys --quiet --keyid-format long --with-colons "${CIX_WORKER_KEY}" | grep sec)) \
  && $checks/ints/eq.sh "${#CIX_FILE_KEYS[@]}" 1 \
@@ -20,6 +18,8 @@ CIX_FILE_KEYS="${CIX_FILE_KEYS[0]}"
 CIX_FILE_KEYS=(${CIX_FILE_KEYS//:/ })
 CIX_FILE_KEY_ID="${CIX_FILE_KEYS[4]}"
 . $checks/strings/eq.sh "${CIX_WORKER_KEY_ID}" "${CIX_FILE_KEY_ID}" 'Wrong GPG key!'
+
+echo 'Not implemented!'; exit 1 # todo
 
 #
 

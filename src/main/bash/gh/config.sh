@@ -36,4 +36,4 @@ git -C "${CIX_WORKDIR}" config 'user.name' "${CIX_USER_NAME}" \
 git -C "${CIX_WORKDIR}" config 'user.email' "${CIX_USER_EMAIL}" \
  || . $checks/fail.sh 'Git config email error!'
 
-. $cix/gh/config_keys.sh "${CIX_WORKER_KEY_ID}" "${GPG_WORKER_KEY}" "${CIX_USER_EMAIL}"
+#. $cix/gh/config_keys.sh "${CIX_WORKER_KEY_ID}" "${GPG_WORKER_KEY}" "${CIX_USER_EMAIL}" # todo
