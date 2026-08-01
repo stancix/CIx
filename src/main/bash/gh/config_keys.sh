@@ -19,8 +19,6 @@ CIX_FILE_KEYS=(${CIX_FILE_KEYS//:/ })
 CIX_FILE_KEY_ID="${CIX_FILE_KEYS[4]}"
 . $checks/strings/eq.sh "${CIX_WORKER_KEY_ID}" "${CIX_FILE_KEY_ID}" 'Wrong GPG key!'
 
-echo 'Not implemented!'; exit 1 # todo
-
 #
 
 gpg --batch --quiet --import "${CIX_WORKER_KEY}" \
@@ -37,9 +35,8 @@ CIX_ACTUAL_KEY_ID="${CIX_ACTUAL_KEYS[4]}"
 
 #
 
-# todo $checks/strings/contains.sh
 CIX_GPG_UIDS="$(gpg --list-keys --quiet --keyid-format long --with-colons | grep uid)" \
- && [[ "${CIX_GPG_UIDS}" == *"<${CIX_WORKER_EMAIL}>"* ]] \
+ && $checks/strings/contains.sh "${CIX_GPG_UIDS}" "${CIX_WORKER_EMAIL}" \
  || . $checks/fail.sh 'Wrong GPG email!'
 
 #
