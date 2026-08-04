@@ -3,12 +3,6 @@
 SUBJECT='./build/yml/metadata.yml'
 . $checks/files/not_empty.sh "${SUBJECT}"
 
-ACTUAL_REP_OWNER="$(yq -Mer '.repository.owner' "${SUBJECT}" 2> /dev/null)" \
- || . $checks/fail.sh 'Get repository owner error!'
-
-ACTUAL_REP_NAME="$(yq -Mer '.repository.name' "${SUBJECT}" 2> /dev/null)" \
- || . $checks/fail.sh 'Get repository name error!'
-
 ACTUAL_VERSION="$(yq -Mer '.version' "${SUBJECT}" 2> /dev/null)" \
  || . $checks/fail.sh 'Get version error!'
 
@@ -22,11 +16,11 @@ CIX_RESULT_COMMIT="$(yq -Mer '.sha' "${SUBJECT}" 2> /dev/null)" \
 
 #
 
-. $checks/strings/require.sh VCS_SRC_COMMIT VCS_DST_COMMIT KEYSTORE KEYSTORE_PASSWORD SIGNING_KEY_ALIAS
+. $checks/strings/require.sh VCS_REP_OWNER VCS_REP_NAME VCS_SRC_COMMIT VCS_DST_COMMIT KEYSTORE KEYSTORE_PASSWORD SIGNING_KEY_ALIAS
 
 CIX_PUBLIC_KEY="${CIX_SHARED}/${SIGNING_KEY_ALIAS}_public.pem"
 HTTP_CODE=$(curl -m 8 -w '%{http_code}' \
- "https://${ACTUAL_REP_OWNER}.github.io/${SIGNING_KEY_ALIAS}-public.pem" \
+ "https://${VCS_REP_OWNER}.github.io/${SIGNING_KEY_ALIAS}-public.pem" \
  -o "${CIX_PUBLIC_KEY}" 2>/dev/null) \
  || . $checks/fail.sh 'Request error!'
 
@@ -34,7 +28,7 @@ HTTP_CODE=$(curl -m 8 -w '%{http_code}' \
 
 #
 
-SUBJECT="./build/zip/${ACTUAL_REP_NAME}-${ACTUAL_VERSION}.zip"
+SUBJECT="./build/zip/${VCS_REP_NAME}-${ACTUAL_VERSION}.zip"
 . $checks/files/not_empty.sh "${SUBJECT}"
 
 #. $mt/secrets/sign.sh              "${ISSUER}" "${KEYSTORE}" "${KEYSTORE_PASSWORD}" # todo
@@ -42,7 +36,7 @@ SUBJECT="./build/zip/${ACTUAL_REP_NAME}-${ACTUAL_VERSION}.zip"
 #. $mt/secrets/sign/check/public.sh "${ISSUER}" "${PUBLIC_KEY}" # todo
 #. $mt/hashes/sha256.sh             "${ISSUER}" # todo
 
-CIX_REP_URL="https://github.com/${ACTUAL_REP_OWNER}/${ACTUAL_REP_NAME}"
+CIX_REP_URL="https://github.com/${VCS_REP_OWNER}/${VCS_REP_NAME}"
 
 CIX_CHANGES_URL="${CIX_REP_URL}/compare/${VCS_DST_COMMIT}...${CIX_RESULT_COMMIT}"
 CIX_DST_URL="${CIX_REP_URL}/commit/${VCS_DST_COMMIT}"
