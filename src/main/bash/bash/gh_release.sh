@@ -22,19 +22,19 @@ CIX_RESULT_COMMIT="$(yq -Mer '.sha' "${SUBJECT}" 2> /dev/null)" \
 
 #
 
-. $checks/strings/require.sh VCS_SRC_COMMIT VCS_DST_BRANCH KEYSTORE KEYSTORE_PASSWORD SIGNING_KEY_ALIAS
+. $checks/strings/require.sh VCS_SRC_COMMIT VCS_DST_COMMIT KEYSTORE KEYSTORE_PASSWORD SIGNING_KEY_ALIAS
 
-PUBLIC_KEY="${CIX_SHARED}/${SIGNING_KEY_ALIAS}_public.pem"
+CIX_PUBLIC_KEY="${CIX_SHARED}/${SIGNING_KEY_ALIAS}_public.pem"
 HTTP_CODE=$(curl -m 8 -w '%{http_code}' \
  "https://${ACTUAL_REP_OWNER}.github.io/${SIGNING_KEY_ALIAS}-public.pem" \
- -o "${PUBLIC_KEY}" 2>/dev/null) \
+ -o "${CIX_PUBLIC_KEY}" 2>/dev/null) \
  || . $checks/fail.sh 'Request error!'
 
 . $checks/ints/eq.sh "${HTTP_CODE}" 200 'Response error!'
 
 #
 
-SUBJECT="./build/zip/${REP_NAME}-${VERSION}.zip"
+SUBJECT="./build/zip/${ACTUAL_REP_NAME}-${ACTUAL_VERSION}.zip"
 . $checks/files/not_empty.sh "${SUBJECT}"
 
 #. $mt/secrets/sign.sh              "${ISSUER}" "${KEYSTORE}" "${KEYSTORE_PASSWORD}" # todo
@@ -42,4 +42,21 @@ SUBJECT="./build/zip/${REP_NAME}-${VERSION}.zip"
 #. $mt/secrets/sign/check/public.sh "${ISSUER}" "${PUBLIC_KEY}" # todo
 #. $mt/hashes/sha256.sh             "${ISSUER}" # todo
 
+CIX_REP_URL="https://github.com/${ACTUAL_REP_OWNER}/${ACTUAL_REP_NAME}"
+
+CIX_CHANGES_URL="${CIX_REP_URL}/compare/${VCS_DST_COMMIT}...${CIX_RESULT_COMMIT}"
+CIX_DST_URL="${CIX_REP_URL}/commit/${VCS_DST_COMMIT}"
+CIX_RESULT_URL="${CIX_REP_URL}/commit/${CIX_RESULT_COMMIT}"
+
+CIX_RELEASE_MESSAGE="
+[Changes](${CIX_CHANGES_URL}) from [${VCS_DST_COMMIT::7}](${CIX_DST_URL}) to [${CIX_RESULT_COMMIT::7}](${CIX_RESULT_URL})
+"
+
+. $cix/gh/release.sh "${ACTUAL_VERSION}" "${CIX_RELEASE_MESSAGE}" 'false'
+
 echo 'Not implemented!'; exit 1 # todo
+
+ISSUER_NAME="${REP_NAME}-${VERSION}.zip"
+ISSUER="build/zip/${ISSUER_NAME}"
+
+. $mt/gh/release/upload.sh "${VERSION}" "${ISSUER}"        "${ISSUER_NAME}"
