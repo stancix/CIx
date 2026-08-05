@@ -16,7 +16,7 @@ CIX_RESULT_COMMIT="$(yq -Mer '.sha' "${SUBJECT}" 2> /dev/null)" \
 
 #
 
-. $checks/strings/require.sh VCS_REP_OWNER VCS_REP_NAME VCS_SRC_COMMIT VCS_DST_COMMIT KEYSTORE KEYSTORE_PASSWORD SIGNING_KEY_ALIAS
+. $checks/strings/require.sh VCS_REP_OWNER VCS_REP_NAME VCS_SRC_COMMIT VCS_DST_COMMIT KEYSTORE KEYSTORE_PASSWORD SIGNING_KEY_ALIAS GITHUB_WORKER_PAT
 
 CIX_PUBLIC_KEY="${CIX_SHARED}/${SIGNING_KEY_ALIAS}_public.pem"
 HTTP_CODE=$(curl -m 8 -w '%{http_code}' \
@@ -46,11 +46,15 @@ CIX_RELEASE_MESSAGE="
 [Changes](${CIX_CHANGES_URL}) from [${VCS_DST_COMMIT::7}](${CIX_DST_URL}) to [${CIX_RESULT_COMMIT::7}](${CIX_RESULT_URL})
 "
 
-. $cix/gh/release.sh "${ACTUAL_VERSION}" "${CIX_RELEASE_MESSAGE}" 'false'
+. $cix/gh/release.sh "${ACTUAL_VERSION}" "${CIX_RELEASE_MESSAGE}" 'true'
 
-echo 'Not implemented!'; exit 1 # todo
+SUBJECT="${CIX_SHARED}/gh_${ACTUAL_VERSION}_release.json"
+. $checks/files/not_empty.sh "${SUBJECT}"
 
-ISSUER_NAME="${REP_NAME}-${VERSION}.zip"
-ISSUER="build/zip/${ISSUER_NAME}"
+CIX_RELEASE_ID="$(yq -Mer '.id' "${SUBJECT}" 2> /dev/null)" \
+ || . $checks/fail.sh 'Get release ID error!'
 
-. $mt/gh/release/upload.sh "${VERSION}" "${ISSUER}"        "${ISSUER_NAME}"
+CIX_ASSET_PATH="./build/zip/${VCS_REP_NAME}-${ACTUAL_VERSION}.zip"
+CIX_ASSET_NAME="${VCS_REP_NAME}-${ACTUAL_VERSION}.zip"
+SUBJECT="$(mktemp)"; rm "${SUBJECT}"
+. $ghx/releases/upload.sh "${VCS_REP_OWNER}" "${VCS_REP_NAME}" GITHUB_WORKER_PAT "${CIX_RELEASE_ID}" "${CIX_ASSET_PATH}" "${CIX_ASSET_NAME}" "${SUBJECT}"
