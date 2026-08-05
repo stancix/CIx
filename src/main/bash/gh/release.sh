@@ -8,7 +8,7 @@ CIX_IS_PRERELEASE="$3"
 
 #. $mt/checks/one_of.sh "${PRERELEASE}" 'false' 'true' # todo
 
-. $checks/strings/require.sh VCS_REP_OWNER VCS_REP_NAME CIX_RELEASE_VERSION CIX_RELEASE_MESSAGE
+. $checks/strings/require.sh VCS_REP_OWNER VCS_REP_NAME CIX_RELEASE_VERSION CIX_RELEASE_MESSAGE GITHUB_WORKER_PAT
 
 . $ghx/releases/tags/not_exists.sh "${VCS_REP_OWNER}" "${VCS_REP_NAME}" "${CIX_RELEASE_VERSION}"
 
@@ -44,4 +44,5 @@ CIX_RESULT_COMMIT="$(yq -Mer '.sha' "${SUBJECT}" 2> /dev/null)" \
 
 #
 
-echo 'Not implemented!'; exit 1 # todo
+SUBJECT="${CIX_SHARED}/gh_${CIX_RELEASE_VERSION}_release.json"
+. $ghx/release.sh "${VCS_REP_OWNER}" "${VCS_REP_NAME}" GITHUB_WORKER_PAT "${CIX_RESULT_COMMIT}" "${CIX_RELEASE_VERSION}" "${CIX_RELEASE_MESSAGE}" "${CIX_IS_PRERELEASE}" "${SUBJECT}"
