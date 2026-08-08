@@ -24,11 +24,11 @@ echo 'Commit...'
 
 . $cix/bash/commit.sh
 
-echo 'Not implemented!'; exit 1 # todo
-
 echo 'Push...'
 
 . $cix/gh/push.sh
+
+echo 'Not implemented!'; exit 1 # todo
 
 echo 'Release...'
 
