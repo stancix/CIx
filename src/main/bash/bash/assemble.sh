@@ -14,7 +14,7 @@ SCRIPT='./assemble.sh'
 SUBJECT='./build/yml/metadata.yml'
 . $checks/files/not_empty.sh "${SUBJECT}"
 
-ACTUAL_VERSION="$(yq -Mer '.version' "${SUBJECT}" 2> /dev/null)" \
+VERSION_NAME="$(yq -Mer '.version' "${SUBJECT}" 2> /dev/null)" \
  || . $checks/fail.sh 'Get version error!'
 
 ACTUAL_REP_OWNER="$(yq -Mer '.repository.owner' "${SUBJECT}" 2> /dev/null)" \
@@ -23,10 +23,14 @@ ACTUAL_REP_OWNER="$(yq -Mer '.repository.owner' "${SUBJECT}" 2> /dev/null)" \
 ACTUAL_REP_NAME="$(yq -Mer '.repository.name' "${SUBJECT}" 2> /dev/null)" \
  || . $checks/fail.sh 'Get repository name error!'
 
-. $checks/strings/require.sh VCS_REP_OWNER VCS_REP_NAME
+SIGNING_TYPE="$(yq -Mer '.signing' "${SUBJECT}" 2> /dev/null)" \
+ || . $checks/fail.sh 'Get signing type error!'
+
+. $checks/strings/require.sh VCS_REP_OWNER VCS_REP_NAME SIGNING_KEY_ALIAS
 
 . $checks/strings/eq.sh "${ACTUAL_REP_OWNER}" "${VCS_REP_OWNER}"
 . $checks/strings/eq.sh "${ACTUAL_REP_NAME}" "${VCS_REP_NAME}"
+. $checks/strings/eq.sh "${SIGNING_TYPE}" "${SIGNING_KEY_ALIAS}"
 
-SUBJECT="./build/zip/${VCS_REP_NAME}-${ACTUAL_VERSION}.zip"
+SUBJECT="./build/zip/${VCS_REP_NAME}-${VERSION_NAME}.zip"
 . $checks/files/not_empty.sh "${SUBJECT}"

@@ -3,7 +3,7 @@
 SUBJECT='./build/yml/metadata.yml'
 . $checks/files/not_empty.sh "${SUBJECT}"
 
-ACTUAL_VERSION="$(yq -Mer '.version' "${SUBJECT}" 2> /dev/null)" \
+VERSION_NAME="$(yq -Mer '.version' "${SUBJECT}" 2> /dev/null)" \
  || . $checks/fail.sh 'Get version error!'
 
 #
@@ -28,7 +28,9 @@ HTTP_CODE=$(curl -m 8 -w '%{http_code}' \
 
 #
 
-SUBJECT="./build/zip/${VCS_REP_NAME}-${ACTUAL_VERSION}.zip"
+echo 'Not implemented! Get public key'; exit 1 # todo
+
+SUBJECT="./build/zip/${VCS_REP_NAME}-${VERSION_NAME}.zip"
 . $checks/files/not_empty.sh "${SUBJECT}"
 
 #. $mt/secrets/sign.sh              "${ISSUER}" "${KEYSTORE}" "${KEYSTORE_PASSWORD}" # todo
@@ -46,15 +48,15 @@ CIX_RELEASE_MESSAGE="
 [Changes](${CIX_CHANGES_URL}) from [${VCS_DST_COMMIT::7}](${CIX_DST_URL}) to [${CIX_RESULT_COMMIT::7}](${CIX_RESULT_URL})
 "
 
-. $cix/gh/release.sh "${ACTUAL_VERSION}" "${CIX_RELEASE_MESSAGE}" 'true'
+. $cix/gh/release.sh "${ACTUAL_VVERSION_NAMEERSION}" "${CIX_RELEASE_MESSAGE}" 'true'
 
-SUBJECT="${CIX_SHARED}/gh_${ACTUAL_VERSION}_release.json"
+SUBJECT="${CIX_SHARED}/gh_${VERSION_NAME}_release.json"
 . $checks/files/not_empty.sh "${SUBJECT}"
 
 CIX_RELEASE_ID="$(yq -Mer '.id' "${SUBJECT}" 2> /dev/null)" \
  || . $checks/fail.sh 'Get release ID error!'
 
-CIX_ASSET_PATH="./build/zip/${VCS_REP_NAME}-${ACTUAL_VERSION}.zip"
-CIX_ASSET_NAME="${VCS_REP_NAME}-${ACTUAL_VERSION}.zip"
+CIX_ASSET_PATH="./build/zip/${VCS_REP_NAME}-${VERSION_NAME}.zip"
+CIX_ASSET_NAME="${VCS_REP_NAME}-${VERSION_NAME}.zip"
 SUBJECT="$(mktemp)"; rm "${SUBJECT}"
 . $ghx/releases/upload.sh "${VCS_REP_OWNER}" "${VCS_REP_NAME}" GITHUB_WORKER_PAT "${CIX_RELEASE_ID}" "${CIX_ASSET_PATH}" "${CIX_ASSET_NAME}" "${SUBJECT}"
