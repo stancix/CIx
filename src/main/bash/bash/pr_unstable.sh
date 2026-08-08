@@ -18,11 +18,13 @@ echo 'Merge...'
 
 echo 'Assemble...'
 
-. $cix/bash/assemble.sh
+. $cix/bash/assemble.sh 'unstable'
 
 echo 'Commit...'
 
 . $cix/bash/commit.sh
+
+echo 'Not implemented!'; exit 1 # todo
 
 echo 'Push...'
 

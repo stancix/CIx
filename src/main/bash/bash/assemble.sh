@@ -1,9 +1,14 @@
 #!/usr/local/bin/bash
 
+. $checks/ints/eq.sh $# 1 'Wrong arguments!'
+
+BUILD_VARIANT="$1"
+. $checks/strings/require.sh BUILD_VARIANT
+
 SCRIPT='./assemble.sh'
 . $checks/files/execs.sh "${SCRIPT}"
 
-"${SCRIPT}" \
+"${SCRIPT}" "${BUILD_VARIANT}" \
  || . $checks/fail.sh 'Assemble error!'
 
 SUBJECT='./build/yml/metadata.yml'
