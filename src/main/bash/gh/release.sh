@@ -10,12 +10,33 @@ CIX_IS_PRERELEASE="$3"
 
 . $checks/strings/require.sh VCS_REP_OWNER VCS_REP_NAME CIX_RELEASE_VERSION CIX_RELEASE_MESSAGE GITHUB_WORKER_PAT
 
+echo "Check release \"${CIX_RELEASE_VERSION}\"..."
+
 . $ghx/releases/tags/not_exists.sh "${VCS_REP_OWNER}" "${VCS_REP_NAME}" "${CIX_RELEASE_VERSION}"
 
 #
 
+echo "Get ref \"${CIX_RELEASE_VERSION}\"..."
+
 SUBJECT="${CIX_SHARED}/gh_${CIX_RELEASE_VERSION}_ref.json"
-. $ghx/ref.sh "${VCS_REP_OWNER}" "${VCS_REP_NAME}" "tags/${CIX_RELEASE_VERSION}" "${SUBJECT}"
+#. $ghx/ref.sh "${VCS_REP_OWNER}" "${VCS_REP_NAME}" "tags/${CIX_RELEASE_VERSION}" "${SUBJECT}" # todo
+
+GITHUBX_API='https://api.github.com'
+GITHUBX_API_VERSION='2026-03-10'
+HTTP_CODE=$(curl -m 8 -w '%{http_code}' \
+ "${GITHUBX_API}/repos/${VCS_REP_OWNER}/${VCS_REP_NAME}/git/ref/tags/${CIX_RELEASE_VERSION}" \
+ --url-query "salt=${RANDOM}" \
+ --header 'Accept: application/vnd.github+json' \
+ --header "X-GitHub-Api-Version: ${GITHUBX_API_VERSION}" \
+ -o "${SUBJECT}" 2>/dev/null)
+
+cat "${SUBJECT}" # todo
+
+if [[ $? -ne 0 ]]; then
+ echo 'Request error!' >&2; exit 1
+elif [[ "${HTTP_CODE}" != '200' ]]; then
+ echo 'Response error!' >&2; exit 1
+fi
 
 CIX_REF_TYPE="$(yq -Mer '.object.type' "${SUBJECT}" 2> /dev/null)" \
  || . $checks/fail.sh 'Get ref type error!'
@@ -25,6 +46,8 @@ CIX_REF_SHA="$(yq -Mer '.object.sha' "${SUBJECT}" 2> /dev/null)" \
  || . $checks/fail.sh 'Get ref SHA error!'
 
 #
+
+echo "Get tag \"${CIX_RELEASE_VERSION}\"..."
 
 SUBJECT="${CIX_SHARED}/gh_${CIX_RELEASE_VERSION}_tag.json"
 . $ghx/tag.sh "${VCS_REP_OWNER}" "${VCS_REP_NAME}" "${CIX_REF_SHA}" "${SUBJECT}"
@@ -43,6 +66,8 @@ CIX_RESULT_COMMIT="$(yq -Mer '.sha' "${SUBJECT}" 2> /dev/null)" \
 . $checks/strings/eq.sh "${CIX_COMMIT_SHA}" "${CIX_RESULT_COMMIT}" 'Wrong commit SHA!'
 
 #
+
+echo "Release \"${CIX_RELEASE_VERSION}\"..."
 
 SUBJECT="${CIX_SHARED}/gh_${CIX_RELEASE_VERSION}_release.json"
 . $ghx/release.sh "${VCS_REP_OWNER}" "${VCS_REP_NAME}" GITHUB_WORKER_PAT "${CIX_RESULT_COMMIT}" "${CIX_RELEASE_VERSION}" "${CIX_RELEASE_MESSAGE}" "${CIX_IS_PRERELEASE}" "${SUBJECT}"

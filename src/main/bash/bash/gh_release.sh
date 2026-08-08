@@ -28,8 +28,6 @@ HTTP_CODE=$(curl -m 8 -w '%{http_code}' \
 
 #
 
-echo 'Not implemented! Get public key'; exit 1 # todo
-
 SUBJECT="./build/zip/${VCS_REP_NAME}-${VERSION_NAME}.zip"
 . $checks/files/not_empty.sh "${SUBJECT}"
 
@@ -56,7 +54,9 @@ else
  CIX_IS_PRERELEASE='true'
 fi
 
-. $cix/gh/release.sh "${ACTUAL_VVERSION_NAMEERSION}" "${CIX_RELEASE_MESSAGE}" "${CIX_IS_PRERELEASE}"
+. $cix/gh/release.sh "${VERSION_NAME}" "${CIX_RELEASE_MESSAGE}" "${CIX_IS_PRERELEASE}"
+
+echo 'Not implemented! Make release'; exit 1 # todo
 
 SUBJECT="${CIX_SHARED}/gh_${VERSION_NAME}_release.json"
 . $checks/files/not_empty.sh "${SUBJECT}"
