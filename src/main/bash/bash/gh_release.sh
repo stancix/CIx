@@ -16,7 +16,7 @@ CIX_RESULT_COMMIT="$(yq -Mer '.sha' "${SUBJECT}" 2> /dev/null)" \
 
 #
 
-. $checks/strings/require.sh VCS_REP_OWNER VCS_REP_NAME VCS_SRC_COMMIT VCS_DST_COMMIT KEYSTORE KEYSTORE_PASSWORD SIGNING_KEY_ALIAS GITHUB_WORKER_PAT
+. $checks/strings/require.sh VCS_REP_OWNER VCS_REP_NAME VCS_DST_COMMIT SIGNING_KEY_ALIAS GITHUB_WORKER_PAT
 
 CIX_PUBLIC_KEY="${CIX_SHARED}/${SIGNING_KEY_ALIAS}_public.pem"
 HTTP_CODE=$(curl -m 8 -w '%{http_code}' \
@@ -24,7 +24,7 @@ HTTP_CODE=$(curl -m 8 -w '%{http_code}' \
  -o "${CIX_PUBLIC_KEY}" 2>/dev/null) \
  || . $checks/fail.sh 'Request error!'
 
-. $checks/ints/eq.sh "${HTTP_CODE}" 200 'Response error!'
+. $checks/ints/eq.sh "${HTTP_CODE}" 200 'Get public key error!'
 
 #
 
@@ -32,6 +32,8 @@ echo 'Not implemented! Get public key'; exit 1 # todo
 
 SUBJECT="./build/zip/${VCS_REP_NAME}-${VERSION_NAME}.zip"
 . $checks/files/not_empty.sh "${SUBJECT}"
+
+#. $checks/strings/require.sh KEYSTORE KEYSTORE_PASSWORD
 
 #. $mt/secrets/sign.sh              "${ISSUER}" "${KEYSTORE}" "${KEYSTORE_PASSWORD}" # todo
 #. $mt/secrets/sign/check.sh        "${ISSUER}" "${KEYSTORE}" "${KEYSTORE_PASSWORD}" # todo
@@ -48,7 +50,13 @@ CIX_RELEASE_MESSAGE="
 [Changes](${CIX_CHANGES_URL}) from [${VCS_DST_COMMIT::7}](${CIX_DST_URL}) to [${CIX_RESULT_COMMIT::7}](${CIX_RESULT_URL})
 "
 
-. $cix/gh/release.sh "${ACTUAL_VVERSION_NAMEERSION}" "${CIX_RELEASE_MESSAGE}" 'true'
+if [[ "${SIGNING_KEY_ALIAS}" == 'release' ]]; then
+ CIX_IS_PRERELEASE='false'
+else
+ CIX_IS_PRERELEASE='true'
+fi
+
+. $cix/gh/release.sh "${ACTUAL_VVERSION_NAMEERSION}" "${CIX_RELEASE_MESSAGE}" "${CIX_IS_PRERELEASE}"
 
 SUBJECT="${CIX_SHARED}/gh_${VERSION_NAME}_release.json"
 . $checks/files/not_empty.sh "${SUBJECT}"
