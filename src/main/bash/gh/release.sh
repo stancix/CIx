@@ -30,8 +30,6 @@ HTTP_CODE=$(curl -m 8 -w '%{http_code}' \
  --header "X-GitHub-Api-Version: ${GITHUBX_API_VERSION}" \
  -o "${SUBJECT}" 2>/dev/null)
 
-cat "${SUBJECT}" # todo
-
 if [[ $? -ne 0 ]]; then
  echo 'Request error!' >&2; exit 1
 elif [[ "${HTTP_CODE}" != '200' ]]; then

@@ -56,8 +56,6 @@ fi
 
 . $cix/gh/release.sh "${VERSION_NAME}" "${CIX_RELEASE_MESSAGE}" "${CIX_IS_PRERELEASE}"
 
-echo 'Not implemented! Make release'; exit 1 # todo
-
 SUBJECT="${CIX_SHARED}/gh_${VERSION_NAME}_release.json"
 . $checks/files/not_empty.sh "${SUBJECT}"
 
