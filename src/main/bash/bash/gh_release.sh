@@ -29,14 +29,13 @@ HTTP_CODE=$(curl -m 8 -w '%{http_code}' \
 #
 
 SUBJECT="./build/zip/${VCS_REP_NAME}-${VERSION_NAME}.zip"
-. $checks/files/not_empty.sh "${SUBJECT}"
 
 #. $checks/strings/require.sh KEYSTORE KEYSTORE_PASSWORD
 
 #. $mt/secrets/sign.sh              "${ISSUER}" "${KEYSTORE}" "${KEYSTORE_PASSWORD}" # todo
 #. $mt/secrets/sign/check.sh        "${ISSUER}" "${KEYSTORE}" "${KEYSTORE_PASSWORD}" # todo
 #. $mt/secrets/sign/check/public.sh "${ISSUER}" "${PUBLIC_KEY}" # todo
-#. $mt/hashes/sha256.sh             "${ISSUER}" # todo
+. $hashes/sha256.sh "${SUBJECT}" "${SUBJECT}.sha256"
 
 CIX_REP_URL="https://github.com/${VCS_REP_OWNER}/${VCS_REP_NAME}"
 
@@ -64,5 +63,12 @@ CIX_RELEASE_ID="$(yq -Mer '.id' "${SUBJECT}" 2> /dev/null)" \
 
 CIX_ASSET_PATH="./build/zip/${VCS_REP_NAME}-${VERSION_NAME}.zip"
 CIX_ASSET_NAME="${VCS_REP_NAME}-${VERSION_NAME}.zip"
-SUBJECT="$(mktemp)"; rm "${SUBJECT}"
-. $ghx/releases/upload.sh "${VCS_REP_OWNER}" "${VCS_REP_NAME}" GITHUB_WORKER_PAT "${CIX_RELEASE_ID}" "${CIX_ASSET_PATH}" "${CIX_ASSET_NAME}" "${SUBJECT}"
+CIX_UPLOAD_DST="$(mktemp)"
+
+rm "${CIX_UPLOAD_DST}"
+. $ghx/releases/upload.sh "${VCS_REP_OWNER}" "${VCS_REP_NAME}" GITHUB_WORKER_PAT "${CIX_RELEASE_ID}" \
+ "${CIX_ASSET_PATH}" "${CIX_ASSET_NAME}" "${CIX_UPLOAD_DST}"
+
+rm "${CIX_UPLOAD_DST}"
+. $ghx/releases/upload.sh "${VCS_REP_OWNER}" "${VCS_REP_NAME}" GITHUB_WORKER_PAT "${CIX_RELEASE_ID}" \
+ "${CIX_ASSET_PATH}.sha256" "${CIX_ASSET_NAME}.sha256" "${CIX_UPLOAD_DST}"
