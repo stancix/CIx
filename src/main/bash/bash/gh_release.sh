@@ -16,7 +16,7 @@ CIX_RESULT_COMMIT="$(yq -Mer '.sha' "${SUBJECT}" 2> /dev/null)" \
 
 #
 
-. $checks/strings/require.sh VCS_REP_OWNER VCS_REP_NAME VCS_DST_COMMIT SIGNING_KEY_ALIAS GITHUB_WORKER_PAT
+. $checks/strings/require.sh VCS_REP_OWNER VCS_REP_NAME VCS_DST_COMMIT SIGNING_KEY_ALIAS GITHUB_WORKER_PAT KEYS_PASSWORD
 
 CIX_PUBLIC_KEY="${CIX_SHARED}/${SIGNING_KEY_ALIAS}_public.pem"
 HTTP_CODE=$(curl -m 8 -w '%{http_code}' \
@@ -29,16 +29,20 @@ HTTP_CODE=$(curl -m 8 -w '%{http_code}' \
 #
 
 SUBJECT="./build/zip/${VCS_REP_NAME}-${VERSION_NAME}.zip"
-
-. $checks/strings/require.sh KEYSTORE_PATH KEYS_PASSWORD
-
+CIX_KEYSTORE="${CIX_SHARED}/${SIGNING_KEY_ALIAS}.pkcs12"
 CIX_PRIVATE_KEY="${CIX_SHARED}/${SIGNING_KEY_ALIAS}.key"
-openssl pkcs12 -in "${KEYSTORE_PATH}" -nocerts -passin 'env:KEYS_PASSWORD' -passout 'env:KEYS_PASSWORD' -out "${CIX_PRIVATE_KEY}" \
+openssl pkcs12 -in "${CIX_KEYSTORE}" -nocerts -passin 'env:KEYS_PASSWORD' -passout 'env:KEYS_PASSWORD' -out "${CIX_PRIVATE_KEY}" \
  || . $checks/fail.sh 'Get private key error!'
 
-#. $mt/secrets/sign.sh              "${ISSUER}" "${KEYSTORE}" "${KEYSTORE_PASSWORD}" # todo
-#. $mt/secrets/sign/check.sh        "${ISSUER}" "${KEYSTORE}" "${KEYSTORE_PASSWORD}" # todo
-#. $mt/secrets/sign/check/public.sh "${ISSUER}" "${PUBLIC_KEY}" # todo
+CIX_CRT="${CIX_SHARED}/${SIGNING_KEY_ALIAS}.crt"
+openssl pkcs12 -in "${CIX_KEYSTORE}" -nokeys -passin 'env:KEYS_PASSWORD' -out "${CIX_CRT}" \
+ || . $checks/fail.sh 'Get crt error!'
+
+openssl x509 -in "${CIX_CRT}" -checkend 0 > /dev/null \
+ || . $checks/fail.sh 'Check crt error!'
+
+. $secrets/signing/sign.sh "${SUBJECT}" "${SUBJECT}.sig" "${CIX_PRIVATE_KEY}" 'sha256' KEYS_PASSWORD
+. $secrets/signing/verify.sh "${SUBJECT}" "${SUBJECT}.sig" "${CIX_PUBLIC_KEY}" 'sha256'
 . $hashes/sha256.sh "${SUBJECT}" "${SUBJECT}.sha256"
 
 echo 'Not implemented!'; exit 1 # todo
