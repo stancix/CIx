@@ -45,8 +45,6 @@ openssl x509 -in "${CIX_CRT}" -checkend 0 > /dev/null \
 . $secrets/signing/verify.sh "${SUBJECT}" "${SUBJECT}.sig" "${CIX_PUBLIC_KEY}" 'sha256'
 . $hashes/sha256.sh "${SUBJECT}" "${SUBJECT}.sha256"
 
-echo 'Not implemented!'; exit 1 # todo
-
 CIX_REP_URL="https://github.com/${VCS_REP_OWNER}/${VCS_REP_NAME}"
 
 CIX_CHANGES_URL="${CIX_REP_URL}/compare/${VCS_DST_COMMIT}...${CIX_RESULT_COMMIT}"
@@ -80,6 +78,10 @@ CIX_UPLOAD_DST="$(mktemp)"
 rm "${CIX_UPLOAD_DST}"
 . $ghx/releases/upload.sh "${VCS_REP_OWNER}" "${VCS_REP_NAME}" GITHUB_WORKER_PAT "${CIX_RELEASE_ID}" \
  "${CIX_ASSET_PATH}" "${CIX_ASSET_NAME}" "${CIX_UPLOAD_DST}"
+
+rm "${CIX_UPLOAD_DST}"
+. $ghx/releases/upload.sh "${VCS_REP_OWNER}" "${VCS_REP_NAME}" GITHUB_WORKER_PAT "${CIX_RELEASE_ID}" \
+ "${CIX_ASSET_PATH}.sig" "${CIX_ASSET_NAME}.sig" "${CIX_UPLOAD_DST}"
 
 rm "${CIX_UPLOAD_DST}"
 . $ghx/releases/upload.sh "${VCS_REP_OWNER}" "${VCS_REP_NAME}" GITHUB_WORKER_PAT "${CIX_RELEASE_ID}" \
