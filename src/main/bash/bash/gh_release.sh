@@ -30,12 +30,18 @@ HTTP_CODE=$(curl -m 8 -w '%{http_code}' \
 
 SUBJECT="./build/zip/${VCS_REP_NAME}-${VERSION_NAME}.zip"
 
-#. $checks/strings/require.sh KEYSTORE KEYSTORE_PASSWORD
+. $checks/strings/require.sh KEYSTORE_PATH KEYS_PASSWORD
+
+CIX_PRIVATE_KEY="${CIX_SHARED}/${SIGNING_KEY_ALIAS}.key"
+openssl pkcs12 -in "${KEYSTORE_PATH}" -nocerts -passin 'env:KEYS_PASSWORD' -passout 'env:KEYS_PASSWORD' -out "${CIX_PRIVATE_KEY}" \
+ || . $checks/fail.sh 'Get private key error!'
 
 #. $mt/secrets/sign.sh              "${ISSUER}" "${KEYSTORE}" "${KEYSTORE_PASSWORD}" # todo
 #. $mt/secrets/sign/check.sh        "${ISSUER}" "${KEYSTORE}" "${KEYSTORE_PASSWORD}" # todo
 #. $mt/secrets/sign/check/public.sh "${ISSUER}" "${PUBLIC_KEY}" # todo
 . $hashes/sha256.sh "${SUBJECT}" "${SUBJECT}.sha256"
+
+echo 'Not implemented!'; exit 1 # todo
 
 CIX_REP_URL="https://github.com/${VCS_REP_OWNER}/${VCS_REP_NAME}"
 
@@ -45,6 +51,8 @@ CIX_RESULT_URL="${CIX_REP_URL}/commit/${CIX_RESULT_COMMIT}"
 
 CIX_RELEASE_MESSAGE="
 [Changes](${CIX_CHANGES_URL}) from [${VCS_DST_COMMIT::7}](${CIX_DST_URL}) to [${CIX_RESULT_COMMIT::7}](${CIX_RESULT_URL})
+
+sha256: \`$(xxd -ps -c 32 -l 32 "${SUBJECT}.sha256")\`
 "
 
 if [[ "${SIGNING_KEY_ALIAS}" == 'release' ]]; then
