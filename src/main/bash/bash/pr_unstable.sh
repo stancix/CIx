@@ -32,6 +32,6 @@ echo 'Release...'
 
 . $cix/bash/gh_release.sh
 
-echo 'Not implemented!'; exit 1 # todo
+echo 'Message...'
 
-# todo message
+. $cix/bash/message.sh
