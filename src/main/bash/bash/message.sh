@@ -16,10 +16,10 @@ CIX_RESULT_COMMIT="$(yq -Mer '.sha' "${SUBJECT}" 2> /dev/null)" \
 
 #
 
-. $checks/strings/require.sh VCS_REP_OWNER VCS_REP_NAME WORKER_BOT_ID WORKER_BOT_SECRET WORKER_CHAT_ID
+. $checks/strings/require.sh VCS_REP_OWNER VCS_REP_NAME WORKER_BOT_ID WORKER_BOT_SECRET WORKER_CHAT_ID VCS_SRC_COMMIT VCS_DST_COMMIT
 
 CIX_REP_OWNER_URL="https://github.com/${VCS_REP_OWNER}"
-CIX_REP_NAME_URL="https://github.com/${VCS_REP_OWNER}/${VCS_REP_NAME}"
+CIX_REP_URL="https://github.com/${VCS_REP_OWNER}/${VCS_REP_NAME}"
 
 SUBJECT="${CIX_SHARED}/gh_${VERSION_NAME}_release.json"
 . $checks/files/not_empty.sh "${SUBJECT}"
@@ -29,7 +29,12 @@ CIX_RELEASE_URL="$(yq -Mer '.html_url' "${SUBJECT}")" \
 
 #
 
-CIX_MESSAGE="[${VCS_REP_OWNER}](${CIX_REP_OWNER_URL}) / [${VCS_REP_NAME}](${CIX_REP_NAME_URL})"
+CIX_MESSAGE="[${VCS_REP_OWNER}](${CIX_REP_OWNER_URL}) / [${VCS_REP_NAME}](${CIX_REP_URL})
+
+\`*\` [${CIX_RESULT_COMMIT::7}](${CIX_REP_URL}/commit/${CIX_RESULT_COMMIT})
+\`|\\\`
+\`| *\` [${VCS_SRC_COMMIT::7}](${CIX_REP_URL}/commit/${VCS_SRC_COMMIT})
+\`*\` [${VCS_DST_COMMIT::7}](${CIX_REP_URL}/commit/${VCS_DST_COMMIT})"
 
 SUBJECT="./build/zip/${VCS_REP_NAME}-${VERSION_NAME}.zip"
 . $checks/files/not_empty.sh "${SUBJECT}"
