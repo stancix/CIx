@@ -29,12 +29,16 @@ CIX_RELEASE_URL="$(yq -Mer '.html_url' "${SUBJECT}")" \
 
 #
 
+CIX_CHANGES_URL="${CIX_REP_URL}/compare/${VCS_DST_COMMIT}...${CIX_RESULT_COMMIT}"
+CIX_ARTIFACT_URL="${CIX_REP_URL}/releases/download/${VERSION_NAME}/${VCS_REP_NAME}-${VERSION_NAME}.zip"
 CIX_MESSAGE="[${VCS_REP_OWNER}](${CIX_REP_OWNER_URL}) / [${VCS_REP_NAME}](${CIX_REP_URL})
 
 \`*\` [${CIX_RESULT_COMMIT::7}](${CIX_REP_URL}/commit/${CIX_RESULT_COMMIT})
 \`|\\\`
 \`| *\` [${VCS_SRC_COMMIT::7}](${CIX_REP_URL}/commit/${VCS_SRC_COMMIT})
-\`*\` [${VCS_DST_COMMIT::7}](${CIX_REP_URL}/commit/${VCS_DST_COMMIT})"
+\`*\` [${VCS_DST_COMMIT::7}](${CIX_REP_URL}/commit/${VCS_DST_COMMIT})
+
+\`${VERSION_NAME}\` / [Release](${CIX_RELEASE_URL}) / [Changes](${CIX_CHANGES_URL}) / [Artifact](${CIX_ARTIFACT_URL})"
 
 SUBJECT="./build/zip/${VCS_REP_NAME}-${VERSION_NAME}.zip"
 . $checks/files/not_empty.sh "${SUBJECT}"
