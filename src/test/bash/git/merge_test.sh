@@ -32,6 +32,8 @@ git -C "${CIX_WORKDIR}" add . \
  && git -C "${CIX_WORKDIR}" commit -m 'foo' --quiet \
  || . $asserts/fail.sh "Git commit error!"
 
+VCS_DST_COMMIT="$(git -C "${CIX_WORKDIR}" rev-parse HEAD)"
+
 git -C "${CIX_WORKDIR}" checkout -b "${VCS_SRC_BRANCH}" --quiet \
  || . $asserts/fail.sh "Git checkout \"${VCS_SRC_BRANCH}\" error!"
 
@@ -46,16 +48,21 @@ VCS_SRC_COMMIT="$(git -C "${CIX_WORKDIR}" rev-parse HEAD)"
 git -C "${CIX_WORKDIR}" switch "${VCS_DST_BRANCH}" --quiet \
  || . $asserts/fail.sh "Git switch \"${VCS_DST_BRANCH}\" error!"
 
+[[ "${VCS_DST_COMMIT}" == "${VCS_SRC_COMMIT}" ]] && exit 1 # todo
+
 #
+
+. $asserts/strings/empty.sh "${SCRIPT}" "$(git -C "${CIX_WORKDIR}" status -s)"
 
 :> "${STDOUT}"
 :> "${STDERR}"
 CIX_WORKDIR="${CIX_WORKDIR}" \
- VCS_SRC_COMMIT="${VCS_SRC_COMMIT}" \
- "${SCRIPT}" > "${STDOUT}" 2> "${STDERR}"
+ "${SCRIPT}" "${VCS_SRC_COMMIT}" > "${STDOUT}" 2> "${STDERR}"
 . $asserts/ints/eq.sh "${SCRIPT}" "$?" 0
 . $asserts/files/empty.sh "${STDOUT}"
 . $asserts/files/empty.sh "${STDERR}"
+. $asserts/strings/eq.sh "${SCRIPT}" "$(git -C "${CIX_WORKDIR}" rev-parse HEAD)" "${VCS_DST_COMMIT}"
+. $asserts/strings/not_empty.sh "${SCRIPT}" "$(git -C "${CIX_WORKDIR}" status -s)"
 rm -rf "${CIX_WORKDIR}"
 
 #

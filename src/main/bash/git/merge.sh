@@ -1,6 +1,10 @@
 #!/usr/local/bin/bash
 
-. $checks/strings/require.sh VCS_SRC_COMMIT
+. $checks/ints/eq.sh $# 1 'Wrong arguments!'
 
-git -C "${CIX_WORKDIR}" merge --no-ff --no-commit "${VCS_SRC_COMMIT}" 2> /dev/null \
+CIX_SRC_COMMIT="$1"
+
+. $checks/strings/require.sh CIX_SRC_COMMIT
+
+git -C "${CIX_WORKDIR}" merge --no-ff --no-commit "${CIX_SRC_COMMIT}" 2> /dev/null \
  || . $checks/fail.sh 'Git merge error!'
