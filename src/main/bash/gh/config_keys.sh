@@ -1,13 +1,13 @@
 #!/usr/local/bin/bash
 
-. $checks/ints/eq.sh $# 3 'Wrong arguments!'
+. $checks/ints/eq.sh $# 2 'Wrong arguments!'
 
 CIX_WORKER_KEY_ID="$1"
-CIX_WORKER_KEY="$2"
-CIX_WORKER_EMAIL="$3"
+CIX_WORKER_EMAIL="$2"
 
-. $checks/strings/require.sh CIX_WORKER_KEY_ID CIX_WORKER_KEY CIX_WORKER_EMAIL
+. $checks/strings/require.sh CIX_WORKER_KEY_ID CIX_WORKER_EMAIL
 
+CIX_WORKER_KEY="${CIX_SHARED}/key.gpg"
 . $checks/files/not_empty.sh "${CIX_WORKER_KEY}"
 
 CIX_FILE_KEYS=($(gpg --show-keys --quiet --keyid-format long --with-colons "${CIX_WORKER_KEY}" | grep sec)) \
@@ -26,12 +26,12 @@ gpg --batch --quiet --import "${CIX_WORKER_KEY}" \
 
 CIX_ACTUAL_KEYS=($(gpg --list-keys --quiet --keyid-format long --with-colons | grep pub)) \
  && $checks/ints/eq.sh "${#CIX_ACTUAL_KEYS[@]}" 1 \
- || . $checks/fail.sh 'Get file keys error!'
+ || . $checks/fail.sh 'Get actual keys error!'
 
 CIX_ACTUAL_KEYS="${CIX_ACTUAL_KEYS[0]}"
 CIX_ACTUAL_KEYS=(${CIX_ACTUAL_KEYS//:/ })
 CIX_ACTUAL_KEY_ID="${CIX_ACTUAL_KEYS[4]}"
-. $checks/strings/eq.sh "${CIX_WORKER_KEY_ID}" "${CIX_ACTUAL_KEY_ID}" 'Wrong GPG key!'
+. $checks/strings/eq.sh "${CIX_WORKER_KEY_ID}" "${CIX_ACTUAL_KEY_ID}" 'Wrong actual key!'
 
 #
 
