@@ -34,7 +34,7 @@ echo 'Commit...'
 
 echo 'Push...'
 
-. $cix/gh/push.sh
+. $cix/gh/push.sh "${VCS_REP_OWNER}" "${VCS_REP_NAME}"
 
 echo 'Not implemented!'; exit 1 # todo
 
