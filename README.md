@@ -29,8 +29,8 @@ $ TMP_PATH="$(mktemp)"; \
 
 ## Unstable
 
-`0.0.4-UNSTABLE`
-| [GitHub](https://github.com/stancix/CIx/releases/tag/0.0.4-UNSTABLE)
+`0.0.5-UNSTABLE`
+| [GitHub](https://github.com/stancix/CIx/releases/tag/0.0.5-UNSTABLE)
 | [Key](https://stancix.github.io/debug-public.pem)
 
 ### Build and Install
@@ -38,15 +38,15 @@ $ TMP_PATH="$(mktemp)"; \
 ```
 $ ./assemble.sh 'unstable' \
  && ./src/test/bash/checks.sh 'unstable' \
- && unzip -d /opt/CIx-0.0.4-UNSTABLE ./build/zip/CIx-0.0.4-UNSTABLE.zip
+ && unzip -d /opt/CIx-0.0.5-UNSTABLE ./build/zip/CIx-0.0.5-UNSTABLE.zip
 ```
 
 ### Download and Install
 
 ```
 $ TMP_PATH="$(mktemp)"; \
- curl -L 'https://github.com/stancix/CIx/releases/download/0.0.4-UNSTABLE/CIx-0.0.4-UNSTABLE.zip' \
-  -o "${TMP_PATH}" && unzip -d /opt/CIx-0.0.4-UNSTABLE "${TMP_PATH}" && rm "${TMP_PATH}"
+ curl -L 'https://github.com/stancix/CIx/releases/download/0.0.5-UNSTABLE/CIx-0.0.5-UNSTABLE.zip' \
+  -o "${TMP_PATH}" && unzip -d /opt/CIx-0.0.5-UNSTABLE "${TMP_PATH}" && rm "${TMP_PATH}"
 ```
 
 ---
