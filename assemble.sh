@@ -1,10 +1,23 @@
 #!/usr/local/bin/bash
 
+if [[ $# -ne 1 ]]; then
+ echo 'Wrong arguments!' >&2; exit 1; fi
+
 REP_OWNER='stancix'
 REP_NAME='CIx'
 VERSION='0.0.1'
 
-if [[ -d 'build' ]]; then
+BUILD_VARIANT="$1"
+case "${BUILD_VARIANT}" in
+ 'unstable')
+  VERSION_NAME="${VERSION}-UNSTABLE"
+  SIGNING_TYPE='debug'
+ ;;
+ '') echo 'No build variant!' >&2; exit 1;;
+ *) echo "Build variant \"${BUILD_VARIANT}\" is not supported!" >&2; exit 1;;
+esac
+
+if [[ -d './build' ]]; then
  echo 'Build dir exists!' >&2; exit 1; fi
 
 mkdir 'build'
@@ -13,7 +26,9 @@ SUBJECT='build/yml/metadata.yml'
 echo "repository:
  owner: '${REP_OWNER}'
  name: '${REP_NAME}'
-version: '${VERSION}'" > "${SUBJECT}"
+variant: '${BUILD_VARIANT}'
+signing: '${SIGNING_TYPE}'
+version: '${VERSION_NAME}'" > "${SUBJECT}"
 
 if [[ ! -s 'LICENSE' ]]; then
  echo 'No license!' >&2; exit 1; fi
