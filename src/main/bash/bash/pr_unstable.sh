@@ -20,11 +20,11 @@ echo 'Merge...'
 
 . $cix/git/merge.sh "${VCS_SRC_COMMIT}"
 
-echo 'Not implemented!'; exit 1 # todo
-
 echo 'Assemble...'
 
 . $cix/bash/assemble.sh 'unstable'
+
+echo 'Not implemented!'; exit 1 # todo
 
 echo 'Check...'
 
