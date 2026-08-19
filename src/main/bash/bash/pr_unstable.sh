@@ -12,11 +12,11 @@ echo 'Config...'
 
 . $cix/gh/config.sh
 
-echo 'Not implemented!'; exit 1 # todo
-
 echo 'Merge...'
 
 . $cix/git/merge.sh
+
+echo 'Not implemented!'; exit 1 # todo
 
 echo 'Assemble...'
 
