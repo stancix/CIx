@@ -4,7 +4,7 @@
 
 CIX_REP_OWNER="$1"
 CIX_REP_NAME="$2"
-CIX_DST_BRANCH="$2"
+CIX_DST_BRANCH="$3"
 
 SUBJECT="${CIX_WORKDIR}/build/yml/metadata.yml"
 . $checks/files/not_empty.sh "${SUBJECT}"
