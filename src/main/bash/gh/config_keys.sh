@@ -1,13 +1,13 @@
 #!/usr/local/bin/bash
 
-. $checks/ints/eq.sh $# 3 'Wrong arguments!'
+. $checks/ints/eq.sh $# 2 'Wrong arguments!'
 
 CIX_WORKER_KEY_ID="$1"
-CIX_WORKER_KEY="$2"
 CIX_WORKER_EMAIL="$3"
 
-. $checks/strings/require.sh CIX_WORKER_KEY_ID CIX_WORKER_KEY CIX_WORKER_EMAIL
+. $checks/strings/require.sh CIX_WORKER_KEY_ID CIX_WORKER_EMAIL
 
+CIX_WORKER_KEY="${CIX_SHARED}/key.gpg"
 . $checks/files/not_empty.sh "${CIX_WORKER_KEY}"
 
 CIX_FILE_KEYS=($(gpg --show-keys --quiet --keyid-format long --with-colons "${CIX_WORKER_KEY}" | grep sec)) \

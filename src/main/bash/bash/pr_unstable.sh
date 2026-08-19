@@ -8,11 +8,11 @@ echo 'Checkout...'
 
 . $cix/gh/checkout.sh "${VCS_REP_OWNER}" "${VCS_REP_NAME}"
 
-echo 'Not implemented!'; exit 1 # todo
-
 echo 'Config...'
 
 . $cix/gh/config.sh
+
+echo 'Not implemented!'; exit 1 # todo
 
 echo 'Merge...'
 
