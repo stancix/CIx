@@ -22,7 +22,7 @@ echo 'Merge...'
 
 echo 'Assemble...'
 
-. $cix/bash/assemble.sh 'unstable'
+. $cix/bash/assemble.sh "${VCS_REP_OWNER}" "${VCS_REP_NAME}" 'unstable'
 
 echo 'Not implemented!'; exit 1 # todo
 
