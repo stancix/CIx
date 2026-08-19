@@ -1,21 +1,26 @@
 #!/usr/local/bin/bash
 
-. $checks/ints/eq.sh $# 1 'Wrong arguments!'
+. $checks/ints/eq.sh $# 3 'Wrong arguments!'
 
-BUILD_VARIANT="$1"
-. $checks/strings/require.sh BUILD_VARIANT
+CIX_REP_OWNER="$1"
+CIX_REP_NAME="$2"
+BUILD_VARIANT="$3"
 
-SCRIPT='./assemble.sh'
+. $checks/strings/require.sh CIX_REP_OWNER CIX_REP_NAME BUILD_VARIANT SIGNING_ALIAS
+
+SCRIPT="${CIX_WORKDIR}/assemble.sh"
 . $checks/files/execs.sh "${SCRIPT}"
 
 "${SCRIPT}" "${BUILD_VARIANT}" \
  || . $checks/fail.sh 'Assemble error!'
 
-SUBJECT='./build/yml/metadata.yml'
+SUBJECT="${CIX_WORKDIR}/build/yml/metadata.yml"
 . $checks/files/not_empty.sh "${SUBJECT}"
 
-VERSION_NAME="$(yq -Mer '.version' "${SUBJECT}" 2> /dev/null)" \
- || . $checks/fail.sh 'Get version error!'
+#
+
+ACTUAL_VARIANT="$(yq -Mer '.build.variant' "${SUBJECT}" 2> /dev/null)" \
+ || . $checks/fail.sh 'Get variant error!'
 
 ACTUAL_REP_OWNER="$(yq -Mer '.repository.owner' "${SUBJECT}" 2> /dev/null)" \
  || . $checks/fail.sh 'Get repository owner error!'
@@ -23,14 +28,16 @@ ACTUAL_REP_OWNER="$(yq -Mer '.repository.owner' "${SUBJECT}" 2> /dev/null)" \
 ACTUAL_REP_NAME="$(yq -Mer '.repository.name' "${SUBJECT}" 2> /dev/null)" \
  || . $checks/fail.sh 'Get repository name error!'
 
-SIGNING_TYPE="$(yq -Mer '.signing' "${SUBJECT}" 2> /dev/null)" \
- || . $checks/fail.sh 'Get signing type error!'
+ACTUAL_ALIAS="$(yq -Mer '.signing.alias' "${SUBJECT}" 2> /dev/null)" \
+ || . $checks/fail.sh 'Get signing alias error!'
 
-. $checks/strings/require.sh VCS_REP_OWNER VCS_REP_NAME SIGNING_KEY_ALIAS
+. $checks/strings/eq.sh "${ACTUAL_VARIANT}" "${BUILD_VARIANT}"
+. $checks/strings/eq.sh "${ACTUAL_REP_OWNER}" "${CIX_REP_OWNER}"
+. $checks/strings/eq.sh "${ACTUAL_REP_NAME}" "${CIX_REP_NAME}"
+. $checks/strings/eq.sh "${ACTUAL_ALIAS}" "${SIGNING_ALIAS}"
 
-. $checks/strings/eq.sh "${ACTUAL_REP_OWNER}" "${VCS_REP_OWNER}"
-. $checks/strings/eq.sh "${ACTUAL_REP_NAME}" "${VCS_REP_NAME}"
-. $checks/strings/eq.sh "${SIGNING_TYPE}" "${SIGNING_KEY_ALIAS}"
+BUILD_VERSION="$(yq -Mer '.build.version' "${SUBJECT}" 2> /dev/null)" \
+ || . $checks/fail.sh 'Get version error!'
 
-SUBJECT="./build/zip/${VCS_REP_NAME}-${VERSION_NAME}.zip"
+SUBJECT="${CIX_WORKDIR}/build/zip/${CIX_REP_NAME}-${BUILD_VERSION}.zip"
 . $checks/files/not_empty.sh "${SUBJECT}"

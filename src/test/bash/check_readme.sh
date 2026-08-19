@@ -5,26 +5,26 @@ SUBJECT='build/yml/metadata.yml'
 
 REP_OWNER="$(yq -Mer -p=yml -o=json '.repository.owner' "${SUBJECT}")" || exit 1
 REP_NAME="$(yq -Mer -p=yml -o=json '.repository.name' "${SUBJECT}")" || exit 1
-BUILD_VARIANT="$(yq -Mer -p=yml -o=json '.variant' "${SUBJECT}")" || exit 1
-VERSION_NAME="$(yq -Mer -p=yml -o=json '.version' "${SUBJECT}")" || exit 1
-SIGNING_TYPE="$(yq -Mer -p=yml -o=json '.signing' "${SUBJECT}")" || exit 1
+BUILD_VARIANT="$(yq -Mer -p=yml -o=json '.build.variant' "${SUBJECT}")" || exit 1
+BUILD_VERSION="$(yq -Mer -p=yml -o=json '.build.version' "${SUBJECT}")" || exit 1
+SIGNING_ALIAS="$(yq -Mer -p=yml -o=json '.signing.alias' "${SUBJECT}")" || exit 1
 
 SUBJECT='README.md'
 . $asserts/files/not_empty.sh "${SUBJECT}"
 
 EXPECTED_NAME="# ${REP_NAME}"
 
-EXPECTED_RELEASE="\`${VERSION_NAME}\`
-| [GitHub](https://github.com/${REP_OWNER}/${REP_NAME}/releases/tag/${VERSION_NAME})
-| [Key](https://${REP_OWNER}.github.io/${SIGNING_TYPE}-public.pem)"
+EXPECTED_RELEASE="\`${BUILD_VERSION}\`
+| [GitHub](https://github.com/${REP_OWNER}/${REP_NAME}/releases/tag/${BUILD_VERSION})
+| [Key](https://${REP_OWNER}.github.io/${SIGNING_ALIAS}-public.pem)"
 
 EXPECTED_BUILD_AND_INSTALL="$ ./assemble.sh '${BUILD_VARIANT}' \\
  && ./src/test/bash/checks.sh '${BUILD_VARIANT}' \\
- && unzip -d /opt/${REP_NAME}-${VERSION_NAME} ./build/zip/${REP_NAME}-${VERSION_NAME}.zip"
+ && unzip -d /opt/${REP_NAME}-${BUILD_VERSION} ./build/zip/${REP_NAME}-${BUILD_VERSION}.zip"
 
 EXPECTED_DOWNLOAD_AND_INSTALL="$ TMP_PATH=\"\$(mktemp)\"; \\
- curl -L 'https://github.com/${REP_OWNER}/${REP_NAME}/releases/download/${VERSION_NAME}/${REP_NAME}-${VERSION_NAME}.zip' \\
-  -o \"\${TMP_PATH}\" && unzip -d /opt/${REP_NAME}-${VERSION_NAME} \"\${TMP_PATH}\" && rm \"\${TMP_PATH}\""
+ curl -L 'https://github.com/${REP_OWNER}/${REP_NAME}/releases/download/${BUILD_VERSION}/${REP_NAME}-${BUILD_VERSION}.zip' \\
+  -o \"\${TMP_PATH}\" && unzip -d /opt/${REP_NAME}-${BUILD_VERSION} \"\${TMP_PATH}\" && rm \"\${TMP_PATH}\""
 
 EXPECTED_TEXTS=(
  "${EXPECTED_NAME}"
