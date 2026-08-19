@@ -11,7 +11,7 @@ BUILD_VARIANT="$1"
 case "${BUILD_VARIANT}" in
  'unstable')
   BUILD_VERSION="${VERSION_NAME}-UNSTABLE"
-  SIGNING_TYPE='debug'
+  SIGNING_KEY_ALIAS='debug'
  ;;
  '') echo 'No build variant!' >&2; exit 1;;
  *) echo "Build variant \"${BUILD_VARIANT}\" is not supported!" >&2; exit 1;;
@@ -30,7 +30,8 @@ repository:
 build:
  variant: '${BUILD_VARIANT}'
  version: '${BUILD_VERSION}'
-signing: '${SIGNING_TYPE}'
+signing:
+ alias: '${SIGNING_KEY_ALIAS}'
 " > "${SUBJECT}"
 
 if [[ ! -s 'LICENSE' ]]; then
