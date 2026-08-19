@@ -17,7 +17,7 @@ case "${BUILD_VARIANT}" in
  *) echo "Build variant \"${BUILD_VARIANT}\" is not supported!" >&2; exit 1;;
 esac
 
-if [[ -d './build' ]]; then
+if [[ -d 'build' ]]; then
  echo 'Build dir exists!' >&2; exit 1; fi
 
 mkdir 'build'
@@ -37,7 +37,7 @@ if [[ ! -s 'README.md' ]]; then
  echo 'No readme!' >&2; exit 1; fi
 
 mkdir -p 'build/zip'
-SUBJECT="build/zip/${REP_NAME}-${VERSION}.zip"
+SUBJECT="build/zip/${REP_NAME}-${VERSION_NAME}.zip"
 zip -Xqr9 "${SUBJECT}" 'src/main/bash' 'LICENSE' 'README.md'
 if [[ $? -ne 0 ]]; then
  echo 'Zip error!' >&2; exit 1; fi
