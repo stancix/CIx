@@ -18,7 +18,6 @@ EXPECTED_RELEASE="\`${VERSION_NAME}\`
 | [Key](https://${REP_OWNER}.github.io/${SIGNING_TYPE}-public.pem)"
 
 EXPECTED_BUILD_AND_INSTALL="$ ./assemble.sh \\
- && ./src/test/bash/check_tests.sh \\
  && unzip -d /opt/${REP_NAME}-${VERSION_NAME} ./build/zip/${REP_NAME}-${VERSION_NAME}.zip"
 
 EXPECTED_DOWNLOAD_AND_INSTALL="$ TMP_PATH=\"\$(mktemp)\"; \\

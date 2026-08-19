@@ -37,7 +37,6 @@ $ TMP_PATH="$(mktemp)"; \
 
 ```
 $ ./assemble.sh \
- && ./src/test/bash/check_tests.sh \
  && unzip -d /opt/CIx-0.0.1-UNSTABLE ./build/zip/CIx-0.0.1-UNSTABLE.zip
 ```
 
