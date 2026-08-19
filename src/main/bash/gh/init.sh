@@ -1,7 +1,6 @@
 #!/usr/local/bin/bash
 
-if [[ $# -ne 2 ]]; then
- echo 'Wrong arguments!' >&2; exit 1; fi
+. $checks/ints/eq.sh $# 2 'Wrong arguments!'
 
 CIX_REP_OWNER="$1"
 CIX_REP_NAME="$2"

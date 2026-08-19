@@ -18,7 +18,7 @@ echo 'Config...'
 
 echo 'Merge...'
 
-. $cix/git/merge.sh
+. $cix/git/merge.sh "${VCS_SRC_COMMIT}"
 
 echo 'Not implemented!'; exit 1 # todo
 
