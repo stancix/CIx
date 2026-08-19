@@ -4,7 +4,7 @@ if [[ $# -ne 2 ]]; then
  echo 'Wrong arguments!' >&2; exit 1; fi
 
 CIX_REP_OWNER="$1"
-CIX_REP_NAME="$1"
+CIX_REP_NAME="$2"
 
 . $checks/strings/require.sh CIX_REP_OWNER CIX_REP_NAME VCS_SRC_COMMIT VCS_DST_BRANCH
 

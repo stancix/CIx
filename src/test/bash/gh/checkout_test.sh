@@ -16,7 +16,6 @@ STDERR="$(mktemp)"
 
 VCS_REP_OWNER='stanuseless'
 VCS_REP_NAME='Useless.Bash'
-GITHUB_WORKER_PAT='foo'
 
 #
 
@@ -24,20 +23,22 @@ GITHUB_WORKER_PAT='foo'
 :> "${STDERR}"
 CIX_WORKDIR="$(mktemp -d)"
 CIX_WORKDIR="${CIX_WORKDIR}" \
- VCS_REP_OWNER="${VCS_REP_OWNER}" \
- VCS_REP_NAME="${VCS_REP_NAME}" \
  VCS_SRC_COMMIT='3f964efe91de6ff69cd630f59fd6c6a811dab76a' \
  VCS_DST_BRANCH='test_dst' \
- GITHUB_WORKER_PAT="${GITHUB_WORKER_PAT}" \
- "${SCRIPT}" > "${STDOUT}" 2> "${STDERR}"
+ "${SCRIPT}" "${VCS_REP_OWNER}" "${VCS_REP_NAME}" > "${STDOUT}" 2> "${STDERR}"
 . $asserts/ints/eq.sh "${SCRIPT}" "$?" 0
 . $asserts/files/empty.sh "${STDOUT}"
 . $asserts/files/empty.sh "${STDERR}"
+
 :> "${STDOUT}"
 :> "${STDERR}"
 git -C "${CIX_WORKDIR}" remote -v > "${STDOUT}" 2> "${STDERR}"
 . $asserts/ints/eq.sh "${SCRIPT}" "$?" 0
-. $asserts/files/not_empty.sh "${STDOUT}"
+STDOUT_EXPECTED="\
+origin	https://github.com/${VCS_REP_OWNER}/${VCS_REP_NAME}.git (fetch)
+origin	https://github.com/${VCS_REP_OWNER}/${VCS_REP_NAME}.git (push)
+"
+. $asserts/files/equals.sh "${STDOUT}" "${STDOUT_EXPECTED}"
 . $asserts/files/empty.sh "${STDERR}"
 rm -rf "${CIX_WORKDIR}"
 
