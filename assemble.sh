@@ -5,12 +5,12 @@ if [[ $# -ne 1 ]]; then
 
 REP_OWNER='stancix'
 REP_NAME='CIx'
-VERSION='0.0.2'
+VERSION_NAME='0.0.2'
 
 BUILD_VARIANT="$1"
 case "${BUILD_VARIANT}" in
  'unstable')
-  VERSION_NAME="${VERSION}-UNSTABLE"
+  VERSION="${VERSION_NAME}-UNSTABLE"
   SIGNING_TYPE='debug'
  ;;
  '') echo 'No build variant!' >&2; exit 1;;
@@ -28,7 +28,7 @@ echo "repository:
  name: '${REP_NAME}'
 variant: '${BUILD_VARIANT}'
 signing: '${SIGNING_TYPE}'
-version: '${VERSION_NAME}'" > "${SUBJECT}"
+version: '${VERSION}'" > "${SUBJECT}"
 
 if [[ ! -s 'LICENSE' ]]; then
  echo 'No license!' >&2; exit 1; fi
@@ -37,7 +37,7 @@ if [[ ! -s 'README.md' ]]; then
  echo 'No readme!' >&2; exit 1; fi
 
 mkdir -p 'build/zip'
-SUBJECT="build/zip/${REP_NAME}-${VERSION_NAME}.zip"
+SUBJECT="build/zip/${REP_NAME}-${VERSION}.zip"
 zip -Xqr9 "${SUBJECT}" 'src/main/bash' 'LICENSE' 'README.md'
 if [[ $? -ne 0 ]]; then
  echo 'Zip error!' >&2; exit 1; fi
