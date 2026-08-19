@@ -8,3 +8,6 @@ CIX_SRC_COMMIT="$1"
 
 git -C "${CIX_WORKDIR}" merge --no-ff --no-commit "${CIX_SRC_COMMIT}" 2> /dev/null \
  || . $checks/fail.sh 'Git merge error!'
+
+git -C "${CIX_WORKDIR}" add . \
+ || . $checks/fail.sh 'Git add error!'
