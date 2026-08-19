@@ -7,7 +7,7 @@ REP_OWNER="$(yq -Mer -p=yml -o=json '.repository.owner' "${SUBJECT}")" || exit 1
 REP_NAME="$(yq -Mer -p=yml -o=json '.repository.name' "${SUBJECT}")" || exit 1
 BUILD_VARIANT="$(yq -Mer -p=yml -o=json '.build.variant' "${SUBJECT}")" || exit 1
 BUILD_VERSION="$(yq -Mer -p=yml -o=json '.build.version' "${SUBJECT}")" || exit 1
-SIGNING_TYPE="$(yq -Mer -p=yml -o=json '.signing' "${SUBJECT}")" || exit 1
+SIGNING_ALIAS="$(yq -Mer -p=yml -o=json '.signing.alias' "${SUBJECT}")" || exit 1
 
 SUBJECT='README.md'
 . $asserts/files/not_empty.sh "${SUBJECT}"
@@ -16,7 +16,7 @@ EXPECTED_NAME="# ${REP_NAME}"
 
 EXPECTED_RELEASE="\`${BUILD_VERSION}\`
 | [GitHub](https://github.com/${REP_OWNER}/${REP_NAME}/releases/tag/${BUILD_VERSION})
-| [Key](https://${REP_OWNER}.github.io/${SIGNING_TYPE}-public.pem)"
+| [Key](https://${REP_OWNER}.github.io/${SIGNING_ALIAS}-public.pem)"
 
 EXPECTED_BUILD_AND_INSTALL="$ ./assemble.sh '${BUILD_VARIANT}' \\
  && ./src/test/bash/checks.sh '${BUILD_VARIANT}' \\
