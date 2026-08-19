@@ -6,7 +6,7 @@ if [[ $# -ne 2 ]]; then
 CIX_REP_OWNER="$1"
 CIX_REP_NAME="$1"
 
-. $checks/strings/require.sh CIX_REP_OWNER CIX_REP_NAME VCS_SRC_COMMIT VCS_DST_BRANCH GH_WORKER_PAT
+. $checks/strings/require.sh CIX_REP_OWNER CIX_REP_NAME VCS_SRC_COMMIT VCS_DST_BRANCH
 
 VCS_URL="https://github.com/${CIX_REP_OWNER}/${CIX_REP_NAME}.git"
 
