@@ -28,11 +28,11 @@ echo 'Checks...'
 
 . $cix/bash/checks.sh 'unstable'
 
-echo 'Not implemented!'; exit 1 # todo
-
 echo 'Commit...'
 
-. $cix/bash/commit.sh
+. $cix/bash/commit.sh "${VCS_REP_OWNER}" "${VCS_REP_NAME}" "${VCS_DST_BRANCH}"
+
+echo 'Not implemented!'; exit 1 # todo
 
 echo 'Push...'
 
