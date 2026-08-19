@@ -1,6 +1,6 @@
 #!/usr/local/bin/bash
 
-SCRIPT='src/main/bash/gh/checkout.sh'
+SCRIPT='src/main/bash/gh/init.sh'
 
 echo "Running test for \"${SCRIPT}\"..."
 
