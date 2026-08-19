@@ -4,9 +4,13 @@ echo 'Check rates...'
 
 . $cix/gh/check_rates.sh
 
+echo 'Init...'
+
+. $cix/gh/init.sh "${VCS_REP_OWNER}" "${VCS_REP_NAME}"
+
 echo 'Checkout...'
 
-. $cix/gh/checkout.sh "${VCS_REP_OWNER}" "${VCS_REP_NAME}"
+. $cix/git/checkout.sh "${VCS_SRC_COMMIT}" "${VCS_DST_BRANCH}"
 
 echo 'Config...'
 
