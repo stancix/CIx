@@ -26,3 +26,27 @@ $ TMP_PATH="$(mktemp)"; \
 ```
 
 ---
+
+## Unstable
+
+`0.0.1-UNSTABLE`
+| [GitHub](https://github.com/stancix/CIx/releases/tag/0.0.1-UNSTABLE)
+| [Key](https://stancix.github.io/debug-public.pem)
+
+### Build and Install
+
+```
+$ ./assemble.sh \
+ && ./src/test/bash/check_tests.sh \
+ && unzip -d /opt/CIx-0.0.1-UNSTABLE ./build/zip/CIx-0.0.1-UNSTABLE.zip
+```
+
+### Download and Install
+
+```
+$ TMP_PATH="$(mktemp)"; \
+ curl -L 'https://github.com/stancix/CIx/releases/download/0.0.1-UNSTABLE/CIx-0.0.1-UNSTABLE.zip' \
+  -o "${TMP_PATH}" && unzip -d /opt/CIx-0.0.1-UNSTABLE "${TMP_PATH}" && rm "${TMP_PATH}"
+```
+
+---
