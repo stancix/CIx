@@ -20,6 +20,10 @@ echo 'Assemble...'
 
 . $cix/bash/assemble.sh 'unstable'
 
+echo 'Check...'
+
+. $cix/bash/check.sh 'unstable'
+
 echo 'Commit...'
 
 . $cix/bash/commit.sh
