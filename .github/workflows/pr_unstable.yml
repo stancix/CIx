@@ -1,0 +1,32 @@
+on:
+  pull_request:
+    types: [opened, reopened]
+    branches: [unstable]
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - env:
+          DOCKER_IMAGE: 'docker.io/kepocnhh/cix-bash-amd64'
+          DOCKER_IMAGE_DIGEST: '52ca040374ac9e496148118034a8dcca884d86edf9d5751d8dc527f729852fb0'
+          SIGNING_KEYS_PASSWORD: '${{secrets.SIGNING_KEYS_PASSWORD_DEBUG}}'
+          GPG_PASSWORD: '${{secrets.GPG_PASSWORD}}'
+        run: |
+          docker run \
+           -e VCS_REP_OWNER='${{github.event.repository.owner.login}}' \
+           -e VCS_REP_NAME='${{github.event.repository.name}}' \
+           -e VCS_SRC_COMMIT='${{github.event.pull_request.head.sha}}' \
+           -e VCS_DST_BRANCH='${{github.event.pull_request.base.ref}}' \
+           -e VCS_DST_COMMIT='${{github.event.pull_request.base.sha}}' \
+           -e GITHUB_WORKER_PAT='${{secrets.GITHUB_WORKER_PAT}}' \
+           -e GPG_WORKER_KEY='/.cix/shared/key.gpg' \
+           -e GPG_PASSWORD="${GPG_PASSWORD}" \
+           -e SIGNING_KEY_ALIAS='debug' \
+           -e SIGNING_KEYS_PASSWORD="${SIGNING_KEYS_PASSWORD}" \
+           -id --name container "${DOCKER_IMAGE}@sha256:${DOCKER_IMAGE_DIGEST}"
+          docker exec container /usr/local/bin/bash -c 'echo "${{secrets.SIGNING_KEYS_DEBUG}}" | base64 -d > "${CIX_SHARED}/${SIGNING_KEY_ALIAS}.pkcs12"'
+          docker exec container /usr/local/bin/bash -c 'echo "${{secrets.GPG_WORKER_KEY}}" > "${GPG_WORKER_KEY}"'
+          docker exec container /usr/local/bin/bash -c '$cix/bash/pr_unstable.sh'
+      - if: always()
+        run: docker rm -f container || true

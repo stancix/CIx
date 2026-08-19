@@ -5,19 +5,19 @@ if [[ $# -ne 1 ]]; then
 
 REP_OWNER='stancix'
 REP_NAME='CIx'
-VERSION='0.0.1'
+VERSION_NAME='0.0.2'
 
 BUILD_VARIANT="$1"
 case "${BUILD_VARIANT}" in
  'unstable')
-  VERSION_NAME="${VERSION}-UNSTABLE"
+  VERSION="${VERSION_NAME}-UNSTABLE"
   SIGNING_TYPE='debug'
  ;;
  '') echo 'No build variant!' >&2; exit 1;;
  *) echo "Build variant \"${BUILD_VARIANT}\" is not supported!" >&2; exit 1;;
 esac
 
-if [[ -d './build' ]]; then
+if [[ -d 'build' ]]; then
  echo 'Build dir exists!' >&2; exit 1; fi
 
 mkdir 'build'
@@ -28,7 +28,7 @@ echo "repository:
  name: '${REP_NAME}'
 variant: '${BUILD_VARIANT}'
 signing: '${SIGNING_TYPE}'
-version: '${VERSION_NAME}'" > "${SUBJECT}"
+version: '${VERSION}'" > "${SUBJECT}"
 
 if [[ ! -s 'LICENSE' ]]; then
  echo 'No license!' >&2; exit 1; fi

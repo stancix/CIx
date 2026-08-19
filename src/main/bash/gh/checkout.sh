@@ -1,8 +1,14 @@
 #!/usr/local/bin/bash
 
-. $checks/strings/require.sh VCS_REP_OWNER VCS_REP_NAME VCS_SRC_COMMIT VCS_DST_BRANCH GITHUB_WORKER_PAT
+if [[ $# -ne 2 ]]; then
+ echo 'Wrong arguments!' >&2; exit 1; fi
 
-VCS_URL="https://${GITHUB_WORKER_PAT}@github.com/${VCS_REP_OWNER}/${VCS_REP_NAME}.git"
+CIX_REP_OWNER="$1"
+CIX_REP_NAME="$1"
+
+. $checks/strings/require.sh CIX_REP_OWNER CIX_REP_NAME VCS_SRC_COMMIT VCS_DST_BRANCH
+
+VCS_URL="https://github.com/${CIX_REP_OWNER}/${CIX_REP_NAME}.git"
 
 git -C "${CIX_WORKDIR}" init --quiet \
  || . $checks/fail.sh 'Git init error!'
