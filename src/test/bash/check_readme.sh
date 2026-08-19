@@ -3,26 +3,27 @@
 SUBJECT='build/yml/metadata.yml'
 . $asserts/files/not_empty.sh "${SUBJECT}"
 
-VERSION="$(yq -Mer -p=yml -o=json .version "${SUBJECT}")" || exit 1
 REP_OWNER="$(yq -Mer -p=yml -o=json .repository.owner "${SUBJECT}")" || exit 1
 REP_NAME="$(yq -Mer -p=yml -o=json .repository.name "${SUBJECT}")" || exit 1
+VERSION_NAME="$(yq -Mer -p=yml -o=json .version "${SUBJECT}")" || exit 1
+SIGNING_TYPE="$(yq -Mer -p=yml -o=json .signing "${SUBJECT}")" || exit 1
 
 SUBJECT='README.md'
 . $asserts/files/not_empty.sh "${SUBJECT}"
 
 EXPECTED_NAME="# ${REP_NAME}"
 
-EXPECTED_RELEASE="\`${VERSION}\`
-| [GitHub](https://github.com/${REP_OWNER}/${REP_NAME}/releases/tag/${VERSION})
-| [Key](https://${REP_OWNER}.github.io/release-public.pem)"
+EXPECTED_RELEASE="\`${VERSION_NAME}\`
+| [GitHub](https://github.com/${REP_OWNER}/${REP_NAME}/releases/tag/${VERSION_NAME})
+| [Key](https://${REP_OWNER}.github.io/${SIGNING_TYPE}-public.pem)"
 
 EXPECTED_BUILD_AND_INSTALL="$ ./assemble.sh \\
  && ./src/test/bash/unit_test.sh \\
- && unzip -d /opt/${REP_NAME}-${VERSION} ./build/zip/${REP_NAME}-${VERSION}.zip"
+ && unzip -d /opt/${REP_NAME}-${VERSION_NAME} ./build/zip/${REP_NAME}-${VERSION_NAME}.zip"
 
 EXPECTED_DOWNLOAD_AND_INSTALL="$ TMP_PATH=\"\$(mktemp)\"; \\
- curl -L 'https://github.com/${REP_OWNER}/${REP_NAME}/releases/download/${VERSION}/${REP_NAME}-${VERSION}.zip' \\
-  -o \"\${TMP_PATH}\" && unzip -d /opt/${REP_NAME}-${VERSION} \"\${TMP_PATH}\" && rm \"\${TMP_PATH}\""
+ curl -L 'https://github.com/${REP_OWNER}/${REP_NAME}/releases/download/${VERSION_NAME}/${REP_NAME}-${VERSION_NAME}.zip' \\
+  -o \"\${TMP_PATH}\" && unzip -d /opt/${REP_NAME}-${VERSION_NAME} \"\${TMP_PATH}\" && rm \"\${TMP_PATH}\""
 
 EXPECTED_TEXTS=(
  "${EXPECTED_NAME}"
