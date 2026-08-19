@@ -7,6 +7,8 @@ CIX_COMMIT_MESSAGE="$2"
 
 . $checks/strings/require.sh CIX_COMMIT_TAG CIX_COMMIT_MESSAGE
 
+# todo check untracked
+
 git -C "${CIX_WORKDIR}" commit -S -m "${CIX_COMMIT_MESSAGE}" \
  || . $checks/fail.sh 'Git sign commit error!'
 
