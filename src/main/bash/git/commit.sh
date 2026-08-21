@@ -7,6 +7,10 @@ CIX_COMMIT_MESSAGE="$2"
 
 . $checks/strings/require.sh CIX_COMMIT_TAG CIX_COMMIT_MESSAGE
 
+. $checks/strings/eq.sh "$(git -C "${CIX_WORKDIR}" diff --name-only)" '' 'Git unstaged error!'
+
+. $checks/strings/eq.sh "$(git -C "${CIX_WORKDIR}" ls-files --others --exclude-standard)" '' 'Git untracked error!'
+
 git -C "${CIX_WORKDIR}" commit -S -m "${CIX_COMMIT_MESSAGE}" \
  || . $checks/fail.sh 'Git sign commit error!'
 

@@ -5,9 +5,11 @@
 CIX_REP_OWNER="$1"
 CIX_REP_NAME="$2"
 
-. $checks/strings/require.sh CIX_REP_OWNER CIX_REP_NAME
+. $checks/strings/require.sh CIX_REP_OWNER CIX_REP_NAME GH_WORKER_PAT
 
-git -C "${CIX_WORKDIR}" push --follow-tags \
+git -C "${CIX_WORKDIR}" \
+ -c http.extraHeader="$(printf 'Authorization: Basic %s' "$(printf '%s:%s' 'x-access-token' "${GH_WORKER_PAT}" | base64 -w0)")" \
+ push --follow-tags \
  || . $checks/fail.sh 'Push error!'
 
 CIX_RESULT_COMMIT="$(git -C "${CIX_WORKDIR}" rev-parse HEAD)" \
