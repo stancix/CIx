@@ -5,6 +5,8 @@
 CIX_REP_OWNER="$1"
 CIX_REP_NAME="$2"
 
+. $checks/strings/require.sh CIX_REP_OWNER CIX_REP_NAME VCS_DST_COMMIT SIGNING_ALIAS GH_WORKER_PAT KEYS_PASSWORD
+
 SUBJECT="${CIX_WORKDIR}/build/yml/metadata.yml"
 . $checks/files/not_empty.sh "${SUBJECT}"
 
@@ -20,8 +22,6 @@ CIX_RESULT_COMMIT="$(yq -Mer '.sha' "${SUBJECT}" 2> /dev/null)" \
  || . $checks/fail.sh 'Get commit SHA error!'
 
 #
-
-. $checks/strings/require.sh CIX_REP_OWNER CIX_REP_NAME VCS_DST_COMMIT SIGNING_ALIAS GH_WORKER_PAT KEYS_PASSWORD
 
 CIX_PUBLIC_KEY="${CIX_SHARED}/${SIGNING_ALIAS}_public.pem"
 HTTP_CODE=$(curl -m 8 -w '%{http_code}' \
@@ -68,7 +68,7 @@ else
  CIX_IS_PRERELEASE='true'
 fi
 
-. $cix/gh/release.sh "${BUILD_VERSION}" "${CIX_RELEASE_MESSAGE}" "${CIX_IS_PRERELEASE}"
+. $cix/gh/release.sh "${CIX_REP_OWNER}" "${CIX_REP_NAME}" "${BUILD_VERSION}" "${CIX_RELEASE_MESSAGE}" "${CIX_IS_PRERELEASE}"
 
 SUBJECT="${CIX_SHARED}/gh_${BUILD_VERSION}_release.json"
 . $checks/files/not_empty.sh "${SUBJECT}"
