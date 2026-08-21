@@ -36,11 +36,11 @@ echo 'Push...'
 
 . $cix/gh/push.sh "${VCS_REP_OWNER}" "${VCS_REP_NAME}"
 
-echo 'Not implemented!'; exit 1 # todo
-
 echo 'Release...'
 
-. $cix/bash/gh_release.sh
+. $cix/bash/gh_release.sh "${VCS_REP_OWNER}" "${VCS_REP_NAME}"
+
+echo 'Not implemented!'; exit 1 # todo
 
 echo 'Message...'
 
