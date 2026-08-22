@@ -1,30 +1,32 @@
 #!/usr/local/bin/bash
 
-. $checks/ints/eq.sh $# 3 'Wrong arguments!'
+. $checks/ints/eq.sh $# 5 'Wrong arguments!'
 
-CIX_RELEASE_VERSION="$1"
-CIX_RELEASE_MESSAGE="$2"
-CIX_IS_PRERELEASE="$3"
+CIX_REP_OWNER="$1"
+CIX_REP_NAME="$2"
+CIX_RELEASE_VERSION="$3"
+CIX_RELEASE_MESSAGE="$4"
+CIX_IS_PRERELEASE="$5"
 
-#. $mt/checks/one_of.sh "${PRERELEASE}" 'false' 'true' # todo
+. $checks/strings/any.sh "${CIX_IS_PRERELEASE}" 'false' 'true' 'Wrong prerelease!'
 
-. $checks/strings/require.sh VCS_REP_OWNER VCS_REP_NAME CIX_RELEASE_VERSION CIX_RELEASE_MESSAGE GITHUB_WORKER_PAT
+. $checks/strings/require.sh CIX_REP_OWNER CIX_REP_NAME CIX_RELEASE_VERSION CIX_RELEASE_MESSAGE GH_WORKER_PAT
 
 echo "Check release \"${CIX_RELEASE_VERSION}\"..."
 
-. $ghx/releases/tags/not_exists.sh "${VCS_REP_OWNER}" "${VCS_REP_NAME}" "${CIX_RELEASE_VERSION}"
+. $ghx/releases/tags/not_exists.sh "${CIX_REP_OWNER}" "${CIX_REP_NAME}" "${CIX_RELEASE_VERSION}"
 
 #
 
 echo "Get ref \"${CIX_RELEASE_VERSION}\"..."
 
 SUBJECT="${CIX_SHARED}/gh_${CIX_RELEASE_VERSION}_ref.json"
-#. $ghx/ref.sh "${VCS_REP_OWNER}" "${VCS_REP_NAME}" "tags/${CIX_RELEASE_VERSION}" "${SUBJECT}" # todo
+#. $ghx/ref.sh "${CIX_REP_OWNER}" "${CIX_REP_NAME}" "tags/${CIX_RELEASE_VERSION}" "${SUBJECT}" # todo
 
 GITHUBX_API='https://api.github.com'
 GITHUBX_API_VERSION='2026-03-10'
 HTTP_CODE=$(curl -m 8 -w '%{http_code}' \
- "${GITHUBX_API}/repos/${VCS_REP_OWNER}/${VCS_REP_NAME}/git/ref/tags/${CIX_RELEASE_VERSION}" \
+ "${GITHUBX_API}/repos/${CIX_REP_OWNER}/${CIX_REP_NAME}/git/ref/tags/${CIX_RELEASE_VERSION}" \
  --url-query "salt=${RANDOM}" \
  --header 'Accept: application/vnd.github+json' \
  --header "X-GitHub-Api-Version: ${GITHUBX_API_VERSION}" \
@@ -48,7 +50,7 @@ CIX_REF_SHA="$(yq -Mer '.object.sha' "${SUBJECT}" 2> /dev/null)" \
 echo "Get tag \"${CIX_RELEASE_VERSION}\"..."
 
 SUBJECT="${CIX_SHARED}/gh_${CIX_RELEASE_VERSION}_tag.json"
-. $ghx/tag.sh "${VCS_REP_OWNER}" "${VCS_REP_NAME}" "${CIX_REF_SHA}" "${SUBJECT}"
+. $ghx/tag.sh "${CIX_REP_OWNER}" "${CIX_REP_NAME}" "${CIX_REF_SHA}" "${SUBJECT}"
 
 CIX_TAG_VERIFIED="$(yq -Me '.verification.verified' "${SUBJECT}" 2> /dev/null)" \
  && $checks/strings/eq.sh "${CIX_TAG_VERIFIED}" 'true' \
@@ -68,4 +70,4 @@ CIX_RESULT_COMMIT="$(yq -Mer '.sha' "${SUBJECT}" 2> /dev/null)" \
 echo "Release \"${CIX_RELEASE_VERSION}\"..."
 
 SUBJECT="${CIX_SHARED}/gh_${CIX_RELEASE_VERSION}_release.json"
-. $ghx/release.sh "${VCS_REP_OWNER}" "${VCS_REP_NAME}" GITHUB_WORKER_PAT "${CIX_RESULT_COMMIT}" "${CIX_RELEASE_VERSION}" "${CIX_RELEASE_MESSAGE}" "${CIX_IS_PRERELEASE}" "${SUBJECT}"
+. $ghx/release.sh "${CIX_REP_OWNER}" "${CIX_REP_NAME}" GH_WORKER_PAT "${CIX_RESULT_COMMIT}" "${CIX_RELEASE_VERSION}" "${CIX_RELEASE_MESSAGE}" "${CIX_IS_PRERELEASE}" "${SUBJECT}"
