@@ -35,15 +35,11 @@ HTTP_CODE=$(curl -m 8 -w '%{http_code}' \
 
 CIX_KEYSTORE="${CIX_SHARED}/${SIGNING_ALIAS}.pkcs12"
 CIX_PRIVATE_KEY="${CIX_SHARED}/${SIGNING_ALIAS}.key"
-openssl pkcs12 -in "${CIX_KEYSTORE}" -nocerts -passin 'env:SIGNING_PASSWORD' -passout 'env:SIGNING_PASSWORD' -out "${CIX_PRIVATE_KEY}" \
- || . $checks/fail.sh 'Get private key error!'
+. $secrets/pkcs12/key.sh "${CIX_KEYSTORE}" "${CIX_PRIVATE_KEY}" SIGNING_PASSWORD
 
 CIX_CRT="${CIX_SHARED}/${SIGNING_ALIAS}.crt"
-openssl pkcs12 -in "${CIX_KEYSTORE}" -nokeys -passin 'env:SIGNING_PASSWORD' -out "${CIX_CRT}" \
- || . $checks/fail.sh 'Get crt error!'
-
-openssl x509 -in "${CIX_CRT}" -checkend 0 > /dev/null \
- || . $checks/fail.sh 'Check crt error!'
+. $secrets/pkcs12/crt.sh "${CIX_KEYSTORE}" "${CIX_CRT}" SIGNING_PASSWORD
+. $secrets/x509/valid.sh "${CIX_CRT}"
 
 SUBJECT="${CIX_WORKDIR}/build/zip/${CIX_REP_NAME}-${BUILD_VERSION}.zip"
 . $secrets/signing/sign.sh "${SUBJECT}" "${SUBJECT}.sig" "${CIX_PRIVATE_KEY}" 'sha256' SIGNING_PASSWORD
