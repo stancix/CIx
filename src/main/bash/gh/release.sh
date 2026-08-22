@@ -8,7 +8,7 @@ CIX_RELEASE_VERSION="$3"
 CIX_RELEASE_MESSAGE="$4"
 CIX_IS_PRERELEASE="$5"
 
-#. $mt/checks/one_of.sh "${PRERELEASE}" 'false' 'true' # todo
+. $checks/strings/any.sh "${CIX_IS_PRERELEASE}" 'false' 'true' 'Wrong prerelease!'
 
 . $checks/strings/require.sh CIX_REP_OWNER CIX_REP_NAME CIX_RELEASE_VERSION CIX_RELEASE_MESSAGE GH_WORKER_PAT
 
