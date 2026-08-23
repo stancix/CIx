@@ -21,22 +21,7 @@ echo "Check release \"${CIX_RELEASE_VERSION}\"..."
 echo "Get ref \"${CIX_RELEASE_VERSION}\"..."
 
 SUBJECT="${CIX_SHARED}/gh_${CIX_RELEASE_VERSION}_ref.json"
-#. $ghx/ref.sh "${CIX_REP_OWNER}" "${CIX_REP_NAME}" "tags/${CIX_RELEASE_VERSION}" "${SUBJECT}" # todo
-
-GITHUBX_API='https://api.github.com'
-GITHUBX_API_VERSION='2026-03-10'
-HTTP_CODE=$(curl -m 8 -w '%{http_code}' \
- "${GITHUBX_API}/repos/${CIX_REP_OWNER}/${CIX_REP_NAME}/git/ref/tags/${CIX_RELEASE_VERSION}" \
- --url-query "salt=${RANDOM}" \
- --header 'Accept: application/vnd.github+json' \
- --header "X-GitHub-Api-Version: ${GITHUBX_API_VERSION}" \
- -o "${SUBJECT}" 2>/dev/null)
-
-if [[ $? -ne 0 ]]; then
- echo 'Request error!' >&2; exit 1
-elif [[ "${HTTP_CODE}" != '200' ]]; then
- echo 'Response error!' >&2; exit 1
-fi
+. $ghx/ref.sh "${CIX_REP_OWNER}" "${CIX_REP_NAME}" "tags/${CIX_RELEASE_VERSION}" "${SUBJECT}" "${RANDOM}"
 
 CIX_REF_TYPE="$(yq -Mer '.object.type' "${SUBJECT}" 2> /dev/null)" \
  || . $checks/fail.sh 'Get ref type error!'
