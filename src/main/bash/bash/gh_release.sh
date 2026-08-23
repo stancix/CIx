@@ -24,14 +24,7 @@ CIX_RESULT_COMMIT="$(yq -Mer '.sha' "${SUBJECT}" 2> /dev/null)" \
 #
 
 CIX_PUBLIC_KEY="${CIX_SHARED}/${SIGNING_ALIAS}_public.pem"
-HTTP_CODE=$(curl -m 8 -w '%{http_code}' \
- "https://${CIX_REP_OWNER}.github.io/${SIGNING_ALIAS}-public.pem" \
- -o "${CIX_PUBLIC_KEY}" 2>/dev/null) \
- || . $checks/fail.sh 'Request error!'
-
-. $checks/ints/eq.sh "${HTTP_CODE}" 200 'Get public key error!'
-
-#
+. $ghx/pages/file.sh "${CIX_REP_OWNER}" "${SIGNING_ALIAS}-public.pem" "${CIX_PUBLIC_KEY}"
 
 CIX_KEYSTORE="${CIX_SHARED}/${SIGNING_ALIAS}.pkcs12"
 CIX_PRIVATE_KEY="${CIX_SHARED}/${SIGNING_ALIAS}.key"
