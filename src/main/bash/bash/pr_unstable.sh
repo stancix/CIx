@@ -42,4 +42,4 @@ echo 'Release...'
 
 echo 'Message...'
 
-. $cix/bash/message.sh "${VCS_REP_OWNER}" "${VCS_REP_NAME}"
+. $cix/bash/message.sh "${VCS_REP_OWNER}" "${VCS_REP_NAME}" "${VCS_SRC_COMMIT}" "${VCS_DST_COMMIT}"
