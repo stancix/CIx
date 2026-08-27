@@ -9,9 +9,11 @@ jobs:
     steps:
       - env:
           DOCKER_IMAGE: 'docker.io/kepocnhh/cix-bash-amd64'
-          DOCKER_IMAGE_DIGEST: '52ca040374ac9e496148118034a8dcca884d86edf9d5751d8dc527f729852fb0'
-          SIGNING_KEYS_PASSWORD: '${{secrets.SIGNING_KEYS_PASSWORD_DEBUG}}'
+          DOCKER_IMAGE_DIGEST: 'a617474105030c51e24e3b4156c4f53c64aac8c0f0a612ae83475c6e1ec9491a'
+          SIGNING_PASSWORD: '${{secrets.SIGNING_PASSWORD_DEBUG}}'
           GPG_PASSWORD: '${{secrets.GPG_PASSWORD}}'
+          GH_WORKER_PAT: '${{secrets.GH_WORKER_PAT}}'
+          WORKER_BOT_SECRET: '${{secrets.WORKER_BOT_SECRET}}'
         run: |
           docker run \
            -e VCS_REP_OWNER='${{github.event.repository.owner.login}}' \
@@ -19,14 +21,16 @@ jobs:
            -e VCS_SRC_COMMIT='${{github.event.pull_request.head.sha}}' \
            -e VCS_DST_BRANCH='${{github.event.pull_request.base.ref}}' \
            -e VCS_DST_COMMIT='${{github.event.pull_request.base.sha}}' \
-           -e GITHUB_WORKER_PAT='${{secrets.GITHUB_WORKER_PAT}}' \
-           -e GPG_WORKER_KEY='/.cix/shared/key.gpg' \
-           -e GPG_PASSWORD="${GPG_PASSWORD}" \
-           -e SIGNING_KEY_ALIAS='debug' \
-           -e SIGNING_KEYS_PASSWORD="${SIGNING_KEYS_PASSWORD}" \
-           -id --name container "${DOCKER_IMAGE}@sha256:${DOCKER_IMAGE_DIGEST}"
-          docker exec container /usr/local/bin/bash -c 'echo "${{secrets.SIGNING_KEYS_DEBUG}}" | base64 -d > "${CIX_SHARED}/${SIGNING_KEY_ALIAS}.pkcs12"'
-          docker exec container /usr/local/bin/bash -c 'echo "${{secrets.GPG_WORKER_KEY}}" > "${GPG_WORKER_KEY}"'
+           -e GH_WORKER_PAT \
+           -e GPG_PASSWORD \
+           -e SIGNING_ALIAS='debug' \
+           -e SIGNING_PASSWORD \
+           -e WORKER_BOT_ID=${{secrets.WORKER_BOT_ID}} \
+           -e WORKER_BOT_SECRET \
+           -e WORKER_CHAT_ID=${{secrets.WORKER_CHAT_ID}} \
+           --interactive --detach --name container "${DOCKER_IMAGE}@sha256:${DOCKER_IMAGE_DIGEST}"
+          docker exec container /usr/local/bin/bash -c 'printf "%s" "${{secrets.SIGNING_KEYS_DEBUG}}" | base64 -d > "${CIX_SHARED}/${SIGNING_ALIAS}.pkcs12"'
+          docker exec container /usr/local/bin/bash -c 'printf "%s" "${{secrets.GPG_WORKER_KEY}}" > "${CIX_SHARED}/key.gpg"'
           docker exec container /usr/local/bin/bash -c '$cix/bash/pr_unstable.sh'
       - if: always()
         run: docker rm -f container || true
