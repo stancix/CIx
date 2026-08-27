@@ -14,6 +14,7 @@ TESTS='src/test/bash'
 
 case "${BUILD_VARIANT}" in
  'unstable')
+  . ${TESTS}/check_license.sh
   . ${TESTS}/check_readme.sh
  ;;
  'release')
