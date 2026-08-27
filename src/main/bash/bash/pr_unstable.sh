@@ -38,10 +38,8 @@ echo 'Push...'
 
 echo 'Release...'
 
-. $cix/bash/gh_release.sh "${VCS_REP_OWNER}" "${VCS_REP_NAME}"
-
-echo 'Not implemented!'; exit 1 # todo
+. $cix/bash/gh_release.sh "${VCS_REP_OWNER}" "${VCS_REP_NAME}" "${VCS_DST_COMMIT}"
 
 echo 'Message...'
 
-. $cix/bash/message.sh
+. $cix/bash/message.sh "${VCS_REP_OWNER}" "${VCS_REP_NAME}" "${VCS_SRC_COMMIT}" "${VCS_DST_COMMIT}"

@@ -1,11 +1,12 @@
 #!/usr/local/bin/bash
 
-. $checks/ints/eq.sh $# 2 'Wrong arguments!'
+. $checks/ints/eq.sh $# 3 'Wrong arguments!'
 
 CIX_REP_OWNER="$1"
 CIX_REP_NAME="$2"
+CIX_DST_COMMIT="$3"
 
-. $checks/strings/require.sh CIX_REP_OWNER CIX_REP_NAME VCS_DST_COMMIT SIGNING_ALIAS SIGNING_PASSWORD GH_WORKER_PAT
+. $checks/strings/require.sh CIX_REP_OWNER CIX_REP_NAME CIX_DST_COMMIT SIGNING_ALIAS SIGNING_PASSWORD GH_WORKER_PAT
 
 SUBJECT="${CIX_WORKDIR}/build/yml/metadata.yml"
 . $checks/files/not_empty.sh "${SUBJECT}"
@@ -41,12 +42,12 @@ SUBJECT="${CIX_WORKDIR}/build/zip/${CIX_REP_NAME}-${BUILD_VERSION}.zip"
 
 CIX_REP_URL="https://github.com/${CIX_REP_OWNER}/${CIX_REP_NAME}"
 
-CIX_CHANGES_URL="${CIX_REP_URL}/compare/${VCS_DST_COMMIT}...${CIX_RESULT_COMMIT}"
-CIX_DST_URL="${CIX_REP_URL}/commit/${VCS_DST_COMMIT}"
+CIX_CHANGES_URL="${CIX_REP_URL}/compare/${CIX_DST_COMMIT}...${CIX_RESULT_COMMIT}"
+CIX_DST_URL="${CIX_REP_URL}/commit/${CIX_DST_COMMIT}"
 CIX_RESULT_URL="${CIX_REP_URL}/commit/${CIX_RESULT_COMMIT}"
 
 CIX_RELEASE_MESSAGE="
-[Changes](${CIX_CHANGES_URL}) from [${VCS_DST_COMMIT::7}](${CIX_DST_URL}) to [${CIX_RESULT_COMMIT::7}](${CIX_RESULT_URL})
+[Changes](${CIX_CHANGES_URL}) from [${CIX_DST_COMMIT::7}](${CIX_DST_URL}) to [${CIX_RESULT_COMMIT::7}](${CIX_RESULT_URL})
 
 sha256: \`$(xxd -ps -c 32 -l 32 "${SUBJECT}.sha256")\`
 "
