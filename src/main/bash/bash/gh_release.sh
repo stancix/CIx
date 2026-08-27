@@ -24,6 +24,8 @@ CIX_RESULT_COMMIT="$(yq -Mer '.sha' "${SUBJECT}" 2> /dev/null)" \
 
 #
 
+echo 'Get public key...'
+
 CIX_PUBLIC_KEY="${CIX_SHARED}/${SIGNING_ALIAS}_public.pem"
 . $ghx/pages/file.sh "${CIX_REP_OWNER}" "${SIGNING_ALIAS}-public.pem" "${CIX_PUBLIC_KEY}"
 
