@@ -7,7 +7,7 @@ while [[ $# -gt 0 ]]; do
  case "$1" in
   '--build_variant') [[ -v BUILD_VARIANT ]] && . $checks/files/execs.sh "\"$1\" already used!"
    BUILD_VARIANT="$2"; shift 2;;
-  *) . $checks/files/execs.sh "\"$1\" is not supported!" >&2;;
+  *) . $checks/files/execs.sh "\"$1\" is not supported!";;
  esac
 done
 

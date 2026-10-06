@@ -30,7 +30,7 @@ echo 'Checks...'
 
 echo 'Commit...'
 
-. $cix/bash/commit.sh "${VCS_REP_OWNER}" "${VCS_REP_NAME}" "${VCS_DST_BRANCH}"
+. $cix/bash/commit.sh --rep_owner "${VCS_REP_OWNER}" --rep_name "${VCS_REP_NAME}" --dst_branch "${VCS_DST_BRANCH}"
 
 echo 'Push...'
 
