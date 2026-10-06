@@ -20,7 +20,7 @@ done
 . $checks/strings/require.sh CIX_REP_OWNER CIX_REP_NAME BUILD_VARIANT SIGNING_ALIAS
 
 SCRIPT="${CIX_WORKDIR}/assemble.sh"
-. $checks/files/execs.sh "${SCRIPT}"
+. $checks/files/execs.sh --build_variant "${SCRIPT}"
 
 "${SCRIPT}" "${BUILD_VARIANT}" \
  || . $checks/fail.sh 'Assemble error!'
