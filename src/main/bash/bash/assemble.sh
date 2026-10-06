@@ -20,9 +20,9 @@ done
 . $checks/strings/require.sh CIX_REP_OWNER CIX_REP_NAME BUILD_VARIANT SIGNING_ALIAS
 
 SCRIPT="${CIX_WORKDIR}/assemble.sh"
-. $checks/files/execs.sh --build_variant "${SCRIPT}"
+. $checks/files/execs.sh "${SCRIPT}"
 
-"${SCRIPT}" "${BUILD_VARIANT}" \
+"${SCRIPT}" --build_variant "${BUILD_VARIANT}" \
  || . $checks/fail.sh 'Assemble error!'
 
 SUBJECT="${CIX_WORKDIR}/build/yml/metadata.yml"
