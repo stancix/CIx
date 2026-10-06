@@ -6,11 +6,11 @@ unset CIX_REP_NAME
 while [[ $# -gt 0 ]]; do
  . $checks/ints/gt.sh $# 1 'Wrong flags!'
  case "$1" in
-  '--rep_owner') [[ -v CIX_REP_OWNER ]] && . $checks/files/execs.sh "\"$1\" already used!"
+  '--rep_owner') [[ -v CIX_REP_OWNER ]] && . $checks/fail.sh "\"$1\" already used!"
    CIX_REP_OWNER="$2"; shift 2;;
-  '--rep_name') [[ -v CIX_REP_NAME ]] && . $checks/files/execs.sh "\"$1\" already used!"
+  '--rep_name') [[ -v CIX_REP_NAME ]] && . $checks/fail.sh "\"$1\" already used!"
    CIX_REP_NAME="$2"; shift 2;;
-  *) . $checks/files/execs.sh "\"$1\" is not supported!";;
+  *) . $checks/fail.sh "\"$1\" is not supported!";;
  esac
 done
 

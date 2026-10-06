@@ -5,9 +5,9 @@ unset BUILD_VARIANT
 while [[ $# -gt 0 ]]; do
  . $checks/ints/gt.sh $# 1 'Wrong flags!'
  case "$1" in
-  '--build_variant') [[ -v BUILD_VARIANT ]] && . $checks/files/execs.sh "\"$1\" already used!"
+  '--build_variant') [[ -v BUILD_VARIANT ]] && . $checks/fail.sh "\"$1\" already used!"
    BUILD_VARIANT="$2"; shift 2;;
-  *) . $checks/files/execs.sh "\"$1\" is not supported!";;
+  *) . $checks/fail.sh "\"$1\" is not supported!";;
  esac
 done
 

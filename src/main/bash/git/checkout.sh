@@ -4,18 +4,13 @@ unset CIX_SRC_COMMIT
 unset CIX_DST_BRANCH
 
 while [[ $# -gt 0 ]]; do
- if [[ $# -lt 2 ]]; then
-  echo 'Wrong flags!' >&2; exit 1; fi
+ . $checks/ints/gt.sh $# 1 'Wrong flags!'
  case "$1" in
-  '--src_commit')
-   if [[ -v CIX_SRC_COMMIT ]]; then
-    echo "\"$1\" already used!" >&2; exit 1; fi
+  '--src_commit') [[ -v CIX_SRC_COMMIT ]] && . $checks/fail.sh "\"$1\" already used!"
    CIX_SRC_COMMIT="$2"; shift 2;;
-  '--dst_branch')
-   if [[ -v CIX_DST_BRANCH ]]; then
-    echo "\"$1\" already used!" >&2; exit 1; fi
+  '--dst_branch') [[ -v CIX_DST_BRANCH ]] && . $checks/fail.sh "\"$1\" already used!"
    CIX_DST_BRANCH="$2"; shift 2;;
-  *) echo "\"$1\" is not supported!" >&2; exit 1;;
+  *) . $checks/fail.sh "\"$1\" is not supported!";;
  esac
 done
 

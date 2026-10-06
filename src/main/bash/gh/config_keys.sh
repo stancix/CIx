@@ -4,18 +4,13 @@ unset CIX_WORKER_KEY_ID
 unset CIX_WORKER_EMAIL
 
 while [[ $# -gt 0 ]]; do
- if [[ $# -lt 2 ]]; then
-  echo 'Wrong flags!' >&2; exit 1; fi
+ . $checks/ints/gt.sh $# 1 'Wrong flags!'
  case "$1" in
-  '--worker_key_id')
-   if [[ -v CIX_WORKER_KEY_ID ]]; then
-    echo "\"$1\" already used!" >&2; exit 1; fi
+  '--worker_key_id') [[ -v CIX_WORKER_KEY_ID ]] && . $checks/fail.sh "\"$1\" already used!"
    CIX_WORKER_KEY_ID="$2"; shift 2;;
-  '--worker_email')
-   if [[ -v CIX_WORKER_EMAIL ]]; then
-    echo "\"$1\" already used!" >&2; exit 1; fi
+  '--worker_email') [[ -v CIX_WORKER_EMAIL ]] && . $checks/fail.sh "\"$1\" already used!"
    CIX_WORKER_EMAIL="$2"; shift 2;;
-  *) echo "\"$1\" is not supported!" >&2; exit 1;;
+  *) . $checks/fail.sh "\"$1\" is not supported!";;
  esac
 done
 

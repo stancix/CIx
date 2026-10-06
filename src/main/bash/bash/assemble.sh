@@ -5,22 +5,15 @@ unset CIX_REP_NAME
 unset BUILD_VARIANT
 
 while [[ $# -gt 0 ]]; do
- if [[ $# -lt 2 ]]; then
-  echo 'Wrong flags!' >&2; exit 1; fi
+ . $checks/ints/gt.sh $# 1 'Wrong flags!'
  case "$1" in
-  '--rep_owner')
-   if [[ -v CIX_REP_OWNER ]]; then
-    echo "\"$1\" already used!" >&2; exit 1; fi
+  '--rep_owner') [[ -v CIX_REP_OWNER ]] && . $checks/fail.sh "\"$1\" already used!"
    CIX_REP_OWNER="$2"; shift 2;;
-  '--rep_name')
-   if [[ -v CIX_REP_NAME ]]; then
-    echo "\"$1\" already used!" >&2; exit 1; fi
+  '--rep_name') [[ -v CIX_REP_NAME ]] && . $checks/fail.sh "\"$1\" already used!"
    CIX_REP_NAME="$2"; shift 2;;
-  '--build_variant')
-   if [[ -v BUILD_VARIANT ]]; then
-    echo "\"$1\" already used!" >&2; exit 1; fi
+  '--build_variant') [[ -v BUILD_VARIANT ]] && . $checks/fail.sh "\"$1\" already used!"
    BUILD_VARIANT="$2"; shift 2;;
-  *) echo "\"$1\" is not supported!" >&2; exit 1;;
+  *) . $checks/fail.sh "\"$1\" is not supported!";;
  esac
 done
 
