@@ -22,7 +22,7 @@ echo 'Merge...'
 
 echo 'Assemble...'
 
-. $cix/bash/assemble.sh "${VCS_REP_OWNER}" "${VCS_REP_NAME}" 'unstable'
+. $cix/bash/assemble.sh --rep_owner "${VCS_REP_OWNER}" --rep_name "${VCS_REP_NAME}" --build_variant 'unstable'
 
 echo 'Checks...'
 
