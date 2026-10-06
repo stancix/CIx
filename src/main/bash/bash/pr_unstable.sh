@@ -6,7 +6,7 @@ echo 'Check rates...'
 
 echo 'Init...'
 
-. $cix/gh/init.sh "${VCS_REP_OWNER}" "${VCS_REP_NAME}"
+. $cix/gh/init.sh --rep_owner "${VCS_REP_OWNER}" --rep_name "${VCS_REP_NAME}"
 
 echo 'Checkout...'
 
