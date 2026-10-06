@@ -38,4 +38,4 @@ git -C "${CIX_WORKDIR}" config 'user.email' "${CIX_USER_EMAIL}" \
 
 echo 'Config keys...'
 
-. $cix/gh/config_keys.sh "${CIX_WORKER_KEY_ID}" "${CIX_USER_EMAIL}"
+. $cix/gh/config_keys.sh --worker_key_id "${CIX_WORKER_KEY_ID}" --worker_email "${CIX_USER_EMAIL}"

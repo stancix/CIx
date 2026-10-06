@@ -1,9 +1,23 @@
 #!/usr/local/bin/bash
 
-. $checks/ints/eq.sh $# 2 'Wrong arguments!'
+unset CIX_WORKER_KEY_ID
+unset CIX_WORKER_EMAIL
 
-CIX_WORKER_KEY_ID="$1"
-CIX_WORKER_EMAIL="$2"
+while [[ $# -gt 0 ]]; do
+ if [[ $# -lt 2 ]]; then
+  echo 'Wrong flags!' >&2; exit 1; fi
+ case "$1" in
+  '--worker_key_id')
+   if [[ -v CIX_WORKER_KEY_ID ]]; then
+    echo "\"$1\" already used!" >&2; exit 1; fi
+   CIX_WORKER_KEY_ID="$2"; shift 2;;
+  '--worker_email')
+   if [[ -v CIX_WORKER_EMAIL ]]; then
+    echo "\"$1\" already used!" >&2; exit 1; fi
+   CIX_WORKER_EMAIL="$2"; shift 2;;
+  *) echo "\"$1\" is not supported!" >&2; exit 1;;
+ esac
+done
 
 . $checks/strings/require.sh CIX_WORKER_KEY_ID CIX_WORKER_EMAIL
 
