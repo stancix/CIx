@@ -18,7 +18,7 @@ echo 'Config...'
 
 echo 'Merge...'
 
-. $cix/git/merge.sh "${VCS_SRC_COMMIT}"
+. $cix/git/merge.sh --src_commit "${VCS_SRC_COMMIT}"
 
 echo 'Assemble...'
 
