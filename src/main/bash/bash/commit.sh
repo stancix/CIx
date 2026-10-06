@@ -13,7 +13,7 @@ while [[ $# -gt 0 ]]; do
    CIX_REP_NAME="$2"; shift 2;;
   '--dst_branch') [[ -v CIX_DST_BRANCH ]] && . $checks/files/execs.sh "\"$1\" already used!"
    CIX_DST_BRANCH="$2"; shift 2;;
-  *) echo "\"$1\" is not supported!" >&2; exit 1;;
+  *) . $checks/files/execs.sh "\"$1\" is not supported!";;
  esac
 done
 

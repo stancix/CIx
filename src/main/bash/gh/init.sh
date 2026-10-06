@@ -4,18 +4,13 @@ unset CIX_REP_OWNER
 unset CIX_REP_NAME
 
 while [[ $# -gt 0 ]]; do
- if [[ $# -lt 2 ]]; then
-  echo 'Wrong flags!' >&2; exit 1; fi
+ . $checks/ints/gt.sh $# 1 'Wrong flags!'
  case "$1" in
-  '--rep_owner')
-   if [[ -v CIX_REP_OWNER ]]; then
-    echo "\"$1\" already used!" >&2; exit 1; fi
+  '--rep_owner') [[ -v CIX_REP_OWNER ]] && . $checks/files/execs.sh "\"$1\" already used!"
    CIX_REP_OWNER="$2"; shift 2;;
-  '--rep_name')
-   if [[ -v CIX_REP_NAME ]]; then
-    echo "\"$1\" already used!" >&2; exit 1; fi
+  '--rep_name') [[ -v CIX_REP_NAME ]] && . $checks/files/execs.sh "\"$1\" already used!"
    CIX_REP_NAME="$2"; shift 2;;
-  *) echo "\"$1\" is not supported!" >&2; exit 1;;
+  *) . $checks/files/execs.sh "\"$1\" is not supported!";;
  esac
 done
 
