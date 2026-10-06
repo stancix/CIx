@@ -7,11 +7,11 @@ while [[ $# -gt 0 ]]; do
  if [[ $# -lt 2 ]]; then
   echo 'Wrong flags!' >&2; exit 1; fi
  case "$1" in
-  '--rep_owner'|'-o')
+  '--rep_owner')
    if [[ -v CIX_REP_OWNER ]]; then
     echo "\"$1\" already used!" >&2; exit 1; fi
    CIX_REP_OWNER="$2"; shift 2;;
-  '--rep_name'|'-n')
+  '--rep_name')
    if [[ -v CIX_REP_NAME ]]; then
     echo "\"$1\" already used!" >&2; exit 1; fi
    CIX_REP_NAME="$2"; shift 2;;

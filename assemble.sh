@@ -10,7 +10,7 @@ while [[ $# -gt 0 ]]; do
  if [[ $# -lt 2 ]]; then
   echo 'Wrong flags!' >&2; exit 1; fi
  case "$1" in
-  '--build_variant'|'-b')
+  '--build_variant')
    if [[ -v BUILD_VARIANT ]]; then
     echo "\"$1\" already used!" >&2; exit 1; fi
    BUILD_VARIANT="$2"; shift 2;;

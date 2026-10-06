@@ -10,7 +10,7 @@ echo 'Init...'
 
 echo 'Checkout...'
 
-. $cix/git/checkout.sh "${VCS_SRC_COMMIT}" "${VCS_DST_BRANCH}"
+. $cix/git/checkout.sh --src_commit "${VCS_SRC_COMMIT}" --dst_branch "${VCS_DST_BRANCH}"
 
 echo 'Config...'
 
