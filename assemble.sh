@@ -1,13 +1,23 @@
 #!/usr/local/bin/bash
 
-if [[ $# -ne 1 ]]; then
- echo 'Wrong arguments!' >&2; exit 1; fi
-
 REP_OWNER='stancix'
 REP_NAME='CIx'
 VERSION_NAME='0.1.7'
 
-BUILD_VARIANT="$1"
+unset BUILD_VARIANT
+
+while [[ $# -gt 0 ]]; do
+ if [[ $# -lt 2 ]]; then
+  echo 'Wrong flags!' >&2; exit 1; fi
+ case "$1" in
+  '--build_variant'|'-b')
+   if [[ -v BUILD_VARIANT ]]; then
+    echo "\"$1\" already used!" >&2; exit 1; fi
+   BUILD_VARIANT="$2"; shift 2;;
+  *) echo "\"$1\" is not supported!" >&2; exit 1;;
+ esac
+done
+
 case "${BUILD_VARIANT}" in
  'unstable')
   BUILD_VERSION="${VERSION_NAME}-UNSTABLE"
