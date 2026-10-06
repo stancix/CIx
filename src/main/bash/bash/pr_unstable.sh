@@ -26,7 +26,7 @@ echo 'Assemble...'
 
 echo 'Checks...'
 
-. $cix/bash/checks.sh 'unstable'
+. $cix/bash/checks.sh --build_variant 'unstable'
 
 echo 'Commit...'
 

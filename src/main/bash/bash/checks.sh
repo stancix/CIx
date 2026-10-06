@@ -1,8 +1,18 @@
 #!/usr/local/bin/bash
 
-. $checks/ints/eq.sh $# 1 'Wrong arguments!'
+unset BUILD_VARIANT
 
-BUILD_VARIANT="$1"
+while [[ $# -gt 0 ]]; do
+ if [[ $# -lt 2 ]]; then
+  echo 'Wrong flags!' >&2; exit 1; fi
+ case "$1" in
+  '--build_variant')
+   if [[ -v BUILD_VARIANT ]]; then
+    echo "\"$1\" already used!" >&2; exit 1; fi
+   BUILD_VARIANT="$2"; shift 2;;
+  *) echo "\"$1\" is not supported!" >&2; exit 1;;
+ esac
+done
 
 . $checks/strings/require.sh BUILD_VARIANT
 
