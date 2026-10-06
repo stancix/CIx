@@ -2,7 +2,7 @@
 
 unset CIX_REP_OWNER
 unset CIX_REP_NAME
-unset BUILD_VARIANT
+unset CIX_DST_BRANCH
 
 while [[ $# -gt 0 ]]; do
  . $checks/ints/gt.sh $# 1 'Wrong flags!'
