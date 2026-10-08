@@ -38,7 +38,7 @@ echo 'Push...'
 
 echo 'Release...'
 
-. $cix/bash/gh_release.sh --rep_owner "${VCS_REP_OWNER}" --rep_name "${VCS_REP_NAME}" --dst_commit "${VCS_DST_COMMIT}"
+. $cix/bash/gh_release.sh --rep_owner "${VCS_REP_OWNER}" --rep_name "${VCS_REP_NAME}" --dst_commit "${VCS_DST_COMMIT}" --signing_alias "${SIGNING_ALIAS}" --worker_pat_src GH_WORKER_PAT --signing_password_src SIGNING_PASSWORD
 
 echo 'Message...'
 

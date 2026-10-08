@@ -3,6 +3,9 @@
 unset CIX_REP_OWNER
 unset CIX_REP_NAME
 unset CIX_DST_COMMIT
+unset CIX_SIGNING_ALIAS
+unset CIX_WORKER_PAT_SRC
+unset CIX_SIGNING_PASSWORD_SRC
 
 while [[ $# -gt 0 ]]; do
  . $checks/ints/gt.sh $# 1 'Wrong flags!'
@@ -13,16 +16,22 @@ while [[ $# -gt 0 ]]; do
    CIX_REP_NAME="$2"; shift 2;;
   '--dst_commit') [[ -v CIX_DST_COMMIT ]] && . $checks/fail.sh "\"$1\" already used!"
    CIX_DST_COMMIT="$2"; shift 2;;
+  '--signing_alias') [[ -v CIX_SIGNING_ALIAS ]] && . $checks/fail.sh "\"$1\" already used!"
+   CIX_SIGNING_ALIAS="$2"; shift 2;;
+  '--worker_pat_src') [[ -v CIX_WORKER_PAT_SRC ]] && . $checks/fail.sh "\"$1\" already used!"
+   CIX_WORKER_PAT_SRC="$2"; shift 2;;
+  '--signing_password_src') [[ -v CIX_SIGNING_PASSWORD_SRC ]] && . $checks/fail.sh "\"$1\" already used!"
+   CIX_SIGNING_PASSWORD_SRC="$2"; shift 2;;
   *) . $checks/fail.sh "\"$1\" is not supported!";;
  esac
 done
 
-. $checks/strings/require.sh CIX_REP_OWNER CIX_REP_NAME CIX_DST_COMMIT SIGNING_ALIAS SIGNING_PASSWORD GH_WORKER_PAT
+. $checks/strings/require.sh CIX_REP_OWNER CIX_REP_NAME CIX_DST_COMMIT CIX_SIGNING_ALIAS
 
 SUBJECT="${CIX_WORKDIR}/build/yml/metadata.yml"
 . $checks/files/not_empty.sh "${SUBJECT}"
 
-BUILD_VERSION="$(yq -Mer '.build.version' "${SUBJECT}" 2> /dev/null)" \
+CIX_BUILD_VERSION="$(yq -Mer '.build.version' "${SUBJECT}" 2> /dev/null)" \
  || . $checks/fail.sh 'Get version error!'
 
 #
@@ -37,19 +46,19 @@ CIX_RESULT_COMMIT="$(yq -Mer '.sha' "${SUBJECT}" 2> /dev/null)" \
 
 echo 'Get public key...'
 
-CIX_PUBLIC_KEY="${CIX_SHARED}/${SIGNING_ALIAS}_public.pem"
-. $ghx/pages/file.sh "${CIX_REP_OWNER}" "${SIGNING_ALIAS}-public.pem" "${CIX_PUBLIC_KEY}"
+CIX_PUBLIC_KEY="${CIX_SHARED}/${CIX_SIGNING_ALIAS}_public.pem"
+. $ghx/pages/file.sh "${CIX_REP_OWNER}" "${CIX_SIGNING_ALIAS}-public.pem" "${CIX_PUBLIC_KEY}"
 
-CIX_KEYSTORE="${CIX_SHARED}/${SIGNING_ALIAS}.pkcs12"
-CIX_PRIVATE_KEY="${CIX_SHARED}/${SIGNING_ALIAS}.key"
-. $secrets/pkcs12/key.sh "${CIX_KEYSTORE}" "${CIX_PRIVATE_KEY}" SIGNING_PASSWORD
+CIX_KEYSTORE="${CIX_SHARED}/${CIX_SIGNING_ALIAS}.pkcs12"
+CIX_PRIVATE_KEY="${CIX_SHARED}/${CIX_SIGNING_ALIAS}.key"
+. $secrets/pkcs12/key.sh "${CIX_KEYSTORE}" "${CIX_PRIVATE_KEY}" CIX_SIGNING_PASSWORD_SRC
 
-CIX_CRT="${CIX_SHARED}/${SIGNING_ALIAS}.crt"
-. $secrets/pkcs12/crt.sh "${CIX_KEYSTORE}" "${CIX_CRT}" SIGNING_PASSWORD
+CIX_CRT="${CIX_SHARED}/${CIX_SIGNING_ALIAS}.crt"
+. $secrets/pkcs12/crt.sh "${CIX_KEYSTORE}" "${CIX_CRT}" CIX_SIGNING_PASSWORD_SRC
 . $secrets/x509/valid.sh "${CIX_CRT}"
 
-SUBJECT="${CIX_WORKDIR}/build/zip/${CIX_REP_NAME}-${BUILD_VERSION}.zip"
-. $secrets/signing/sign.sh "${SUBJECT}" "${SUBJECT}.sig" "${CIX_PRIVATE_KEY}" 'sha256' SIGNING_PASSWORD
+SUBJECT="${CIX_WORKDIR}/build/zip/${CIX_REP_NAME}-${CIX_BUILD_VERSION}.zip"
+. $secrets/signing/sign.sh "${SUBJECT}" "${SUBJECT}.sig" "${CIX_PRIVATE_KEY}" 'sha256' CIX_SIGNING_PASSWORD_SRC
 . $secrets/signing/verify.sh "${SUBJECT}" "${SUBJECT}.sig" "${CIX_PUBLIC_KEY}" 'sha256'
 . $hashes/sha256.sh "${SUBJECT}" "${SUBJECT}.sha256"
 
@@ -65,32 +74,32 @@ CIX_RELEASE_MESSAGE="
 sha256: \`$(xxd -ps -c 32 -l 32 "${SUBJECT}.sha256")\`
 "
 
-if [[ "${SIGNING_ALIAS}" == 'release' ]]; then
+if [[ "${CIX_SIGNING_ALIAS}" == 'release' ]]; then
  CIX_IS_PRERELEASE='false'
 else
  CIX_IS_PRERELEASE='true'
 fi
 
-. $cix/gh/release.sh "${CIX_REP_OWNER}" "${CIX_REP_NAME}" "${BUILD_VERSION}" "${CIX_RELEASE_MESSAGE}" "${CIX_IS_PRERELEASE}"
+. $cix/gh/release.sh --rep_owner "${VCS_REP_OWNER}" --rep_name "${VCS_REP_NAME}" --version "${CIX_BUILD_VERSION}" --message "${CIX_RELEASE_MESSAGE}" --is_prerelease "${CIX_IS_PRERELEASE}" --worker_pat_src "${CIX_WORKER_PAT_SRC}"
 
-SUBJECT="${CIX_SHARED}/gh_${BUILD_VERSION}_release.json"
+SUBJECT="${CIX_SHARED}/gh_${CIX_BUILD_VERSION}_release.json"
 . $checks/files/not_empty.sh "${SUBJECT}"
 
 CIX_RELEASE_ID="$(yq -Mer '.id' "${SUBJECT}" 2> /dev/null)" \
  || . $checks/fail.sh 'Get release ID error!'
 
-CIX_ASSET_PATH="${CIX_WORKDIR}/build/zip/${CIX_REP_NAME}-${BUILD_VERSION}.zip"
-CIX_ASSET_NAME="${CIX_REP_NAME}-${BUILD_VERSION}.zip"
+CIX_ASSET_PATH="${CIX_WORKDIR}/build/zip/${CIX_REP_NAME}-${CIX_BUILD_VERSION}.zip"
+CIX_ASSET_NAME="${CIX_REP_NAME}-${CIX_BUILD_VERSION}.zip"
 CIX_UPLOAD_DST="$(mktemp)"
 
 rm "${CIX_UPLOAD_DST}"
-. $ghx/releases/upload.sh "${CIX_REP_OWNER}" "${CIX_REP_NAME}" GH_WORKER_PAT "${CIX_RELEASE_ID}" \
+. $ghx/releases/upload.sh "${CIX_REP_OWNER}" "${CIX_REP_NAME}" CIX_WORKER_PAT_SRC "${CIX_RELEASE_ID}" \
  "${CIX_ASSET_PATH}" "${CIX_ASSET_NAME}" "${CIX_UPLOAD_DST}"
 
 rm "${CIX_UPLOAD_DST}"
-. $ghx/releases/upload.sh "${CIX_REP_OWNER}" "${CIX_REP_NAME}" GH_WORKER_PAT "${CIX_RELEASE_ID}" \
+. $ghx/releases/upload.sh "${CIX_REP_OWNER}" "${CIX_REP_NAME}" CIX_WORKER_PAT_SRC "${CIX_RELEASE_ID}" \
  "${CIX_ASSET_PATH}.sig" "${CIX_ASSET_NAME}.sig" "${CIX_UPLOAD_DST}"
 
 rm "${CIX_UPLOAD_DST}"
-. $ghx/releases/upload.sh "${CIX_REP_OWNER}" "${CIX_REP_NAME}" GH_WORKER_PAT "${CIX_RELEASE_ID}" \
+. $ghx/releases/upload.sh "${CIX_REP_OWNER}" "${CIX_REP_NAME}" CIX_WORKER_PAT_SRC "${CIX_RELEASE_ID}" \
  "${CIX_ASSET_PATH}.sha256" "${CIX_ASSET_NAME}.sha256" "${CIX_UPLOAD_DST}"
