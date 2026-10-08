@@ -2,7 +2,8 @@
 
 unset CIX_REP_OWNER
 unset CIX_REP_NAME
-unset BUILD_VARIANT
+unset CIX_BUILD_VARIANT
+unset CIX_SIGNING_ALIAS
 
 while [[ $# -gt 0 ]]; do
  . $checks/ints/gt.sh $# 1 'Wrong flags!'
@@ -11,18 +12,20 @@ while [[ $# -gt 0 ]]; do
    CIX_REP_OWNER="$2"; shift 2;;
   '--rep_name') [[ -v CIX_REP_NAME ]] && . $checks/fail.sh "\"$1\" already used!"
    CIX_REP_NAME="$2"; shift 2;;
-  '--build_variant') [[ -v BUILD_VARIANT ]] && . $checks/fail.sh "\"$1\" already used!"
-   BUILD_VARIANT="$2"; shift 2;;
+  '--build_variant') [[ -v CIX_BUILD_VARIANT ]] && . $checks/fail.sh "\"$1\" already used!"
+   CIX_BUILD_VARIANT="$2"; shift 2;;
+  '--signing_alias') [[ -v CIX_SIGNING_ALIAS ]] && . $checks/fail.sh "\"$1\" already used!"
+   CIX_SIGNING_ALIAS="$2"; shift 2;;
   *) . $checks/fail.sh "\"$1\" is not supported!";;
  esac
 done
 
-. $checks/strings/require.sh CIX_REP_OWNER CIX_REP_NAME BUILD_VARIANT SIGNING_ALIAS
+. $checks/strings/require.sh CIX_REP_OWNER CIX_REP_NAME CIX_BUILD_VARIANT CIX_SIGNING_ALIAS
 
 SCRIPT="${CIX_WORKDIR}/assemble.sh"
 . $checks/files/execs.sh "${SCRIPT}"
 
-"${SCRIPT}" --build_variant "${BUILD_VARIANT}" \
+"${SCRIPT}" --build_variant "${CIX_BUILD_VARIANT}" \
  || . $checks/fail.sh 'Assemble error!'
 
 SUBJECT="${CIX_WORKDIR}/build/yml/metadata.yml"
@@ -42,10 +45,10 @@ ACTUAL_REP_NAME="$(yq -Mer '.repository.name' "${SUBJECT}" 2> /dev/null)" \
 ACTUAL_ALIAS="$(yq -Mer '.signing.alias' "${SUBJECT}" 2> /dev/null)" \
  || . $checks/fail.sh 'Get signing alias error!'
 
-. $checks/strings/eq.sh "${ACTUAL_VARIANT}" "${BUILD_VARIANT}"
+. $checks/strings/eq.sh "${ACTUAL_VARIANT}" "${CIX_BUILD_VARIANT}"
 . $checks/strings/eq.sh "${ACTUAL_REP_OWNER}" "${CIX_REP_OWNER}"
 . $checks/strings/eq.sh "${ACTUAL_REP_NAME}" "${CIX_REP_NAME}"
-. $checks/strings/eq.sh "${ACTUAL_ALIAS}" "${SIGNING_ALIAS}"
+. $checks/strings/eq.sh "${ACTUAL_ALIAS}" "${CIX_SIGNING_ALIAS}"
 
 BUILD_VERSION="$(yq -Mer '.build.version' "${SUBJECT}" 2> /dev/null)" \
  || . $checks/fail.sh 'Get version error!'
