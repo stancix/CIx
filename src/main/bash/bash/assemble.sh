@@ -33,7 +33,7 @@ SUBJECT="${CIX_WORKDIR}/build/yml/metadata.yml"
 
 #
 
-ACTUAL_VARIANT="$(yq -Mer '.build.variant' "${SUBJECT}" 2> /dev/null)" \
+ACTUAL_BUILD_VARIANT="$(yq -Mer '.build.variant' "${SUBJECT}" 2> /dev/null)" \
  || . $checks/fail.sh 'Get variant error!'
 
 ACTUAL_REP_OWNER="$(yq -Mer '.repository.owner' "${SUBJECT}" 2> /dev/null)" \
@@ -45,7 +45,7 @@ ACTUAL_REP_NAME="$(yq -Mer '.repository.name' "${SUBJECT}" 2> /dev/null)" \
 ACTUAL_ALIAS="$(yq -Mer '.signing.alias' "${SUBJECT}" 2> /dev/null)" \
  || . $checks/fail.sh 'Get signing alias error!'
 
-. $checks/strings/eq.sh "${ACTUAL_VARIANT}" "${CIX_BUILD_VARIANT}"
+. $checks/strings/eq.sh "${ACTUAL_BUILD_VARIANT}" "${CIX_BUILD_VARIANT}"
 . $checks/strings/eq.sh "${ACTUAL_REP_OWNER}" "${CIX_REP_OWNER}"
 . $checks/strings/eq.sh "${ACTUAL_REP_NAME}" "${CIX_REP_NAME}"
 . $checks/strings/eq.sh "${ACTUAL_ALIAS}" "${CIX_SIGNING_ALIAS}"
