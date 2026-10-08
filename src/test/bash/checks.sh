@@ -36,4 +36,4 @@ case "${BUILD_VARIANT}" in
  *) echo "Build variant \"${BUILD_VARIANT}\" is not supported!" >&2; exit 1;;
 esac
 
-echo 'All tests passed.'
+echo 'All checks passed.'
