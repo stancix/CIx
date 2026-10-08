@@ -14,7 +14,7 @@ echo 'Checkout...'
 
 echo 'Config...'
 
-. $cix/gh/config.sh
+. $cix/gh/config.sh --worker_pat_src GH_WORKER_PAT
 
 echo 'Merge...'
 
