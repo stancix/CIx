@@ -15,7 +15,7 @@ done
 
 SUBJECT="${CIX_SHARED}/gh_gpg_keys.json"
 
-. $ghx/user_gpg_keys.sh CIX_WORKER_PAT_SRC "${SUBJECT}"
+. $ghx/user_gpg_keys.sh "${CIX_WORKER_PAT_SRC}" "${SUBJECT}"
 
 CIX_WORKER_KEY_ID="$(yq -Mer '.[0].key_id' "${SUBJECT}")" \
  || . $checks/fail.sh 'Get GPG key ID error!'
@@ -24,7 +24,7 @@ CIX_WORKER_KEY_ID="$(yq -Mer '.[0].key_id' "${SUBJECT}")" \
 
 SUBJECT="${CIX_SHARED}/gh_user.json"
 
-. $ghx/user.sh CIX_WORKER_PAT_SRC "${SUBJECT}"
+. $ghx/user.sh "${CIX_WORKER_PAT_SRC}" "${SUBJECT}"
 
 CIX_USER_NAME="$(yq -Mer '.name' "${SUBJECT}")" \
  || . $checks/fail.sh 'Get user name error!'
