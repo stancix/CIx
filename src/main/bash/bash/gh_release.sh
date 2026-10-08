@@ -51,14 +51,14 @@ CIX_PUBLIC_KEY="${CIX_SHARED}/${CIX_SIGNING_ALIAS}_public.pem"
 
 CIX_KEYSTORE="${CIX_SHARED}/${CIX_SIGNING_ALIAS}.pkcs12"
 CIX_PRIVATE_KEY="${CIX_SHARED}/${CIX_SIGNING_ALIAS}.key"
-. $secrets/pkcs12/key.sh "${CIX_KEYSTORE}" "${CIX_PRIVATE_KEY}" CIX_SIGNING_PASSWORD_SRC
+. $secrets/pkcs12/key.sh "${CIX_KEYSTORE}" "${CIX_PRIVATE_KEY}" "${CIX_SIGNING_PASSWORD_SRC}"
 
 CIX_CRT="${CIX_SHARED}/${CIX_SIGNING_ALIAS}.crt"
-. $secrets/pkcs12/crt.sh "${CIX_KEYSTORE}" "${CIX_CRT}" CIX_SIGNING_PASSWORD_SRC
+. $secrets/pkcs12/crt.sh "${CIX_KEYSTORE}" "${CIX_CRT}" "${CIX_SIGNING_PASSWORD_SRC}"
 . $secrets/x509/valid.sh "${CIX_CRT}"
 
 SUBJECT="${CIX_WORKDIR}/build/zip/${CIX_REP_NAME}-${CIX_BUILD_VERSION}.zip"
-. $secrets/signing/sign.sh "${SUBJECT}" "${SUBJECT}.sig" "${CIX_PRIVATE_KEY}" 'sha256' CIX_SIGNING_PASSWORD_SRC
+. $secrets/signing/sign.sh "${SUBJECT}" "${SUBJECT}.sig" "${CIX_PRIVATE_KEY}" 'sha256' "${CIX_SIGNING_PASSWORD_SRC}"
 . $secrets/signing/verify.sh "${SUBJECT}" "${SUBJECT}.sig" "${CIX_PUBLIC_KEY}" 'sha256'
 . $hashes/sha256.sh "${SUBJECT}" "${SUBJECT}.sha256"
 
@@ -80,7 +80,7 @@ else
  CIX_IS_PRERELEASE='true'
 fi
 
-. $cix/gh/release.sh --rep_owner "${VCS_REP_OWNER}" --rep_name "${VCS_REP_NAME}" --version "${CIX_BUILD_VERSION}" --message "${CIX_RELEASE_MESSAGE}" --is_prerelease "${CIX_IS_PRERELEASE}" --worker_pat_src "${CIX_WORKER_PAT_SRC}"
+. $cix/gh/release.sh --rep_owner "${CIX_REP_OWNER}" --rep_name "${CIX_REP_NAME}" --version "${CIX_BUILD_VERSION}" --message "${CIX_RELEASE_MESSAGE}" --is_prerelease "${CIX_IS_PRERELEASE}" --worker_pat_src "${CIX_WORKER_PAT_SRC}"
 
 SUBJECT="${CIX_SHARED}/gh_${CIX_BUILD_VERSION}_release.json"
 . $checks/files/not_empty.sh "${SUBJECT}"
@@ -93,13 +93,13 @@ CIX_ASSET_NAME="${CIX_REP_NAME}-${CIX_BUILD_VERSION}.zip"
 CIX_UPLOAD_DST="$(mktemp)"
 
 rm "${CIX_UPLOAD_DST}"
-. $ghx/releases/upload.sh "${CIX_REP_OWNER}" "${CIX_REP_NAME}" CIX_WORKER_PAT_SRC "${CIX_RELEASE_ID}" \
+. $ghx/releases/upload.sh "${CIX_REP_OWNER}" "${CIX_REP_NAME}" "${CIX_WORKER_PAT_SRC}" "${CIX_RELEASE_ID}" \
  "${CIX_ASSET_PATH}" "${CIX_ASSET_NAME}" "${CIX_UPLOAD_DST}"
 
 rm "${CIX_UPLOAD_DST}"
-. $ghx/releases/upload.sh "${CIX_REP_OWNER}" "${CIX_REP_NAME}" CIX_WORKER_PAT_SRC "${CIX_RELEASE_ID}" \
+. $ghx/releases/upload.sh "${CIX_REP_OWNER}" "${CIX_REP_NAME}" "${CIX_WORKER_PAT_SRC}" "${CIX_RELEASE_ID}" \
  "${CIX_ASSET_PATH}.sig" "${CIX_ASSET_NAME}.sig" "${CIX_UPLOAD_DST}"
 
 rm "${CIX_UPLOAD_DST}"
-. $ghx/releases/upload.sh "${CIX_REP_OWNER}" "${CIX_REP_NAME}" CIX_WORKER_PAT_SRC "${CIX_RELEASE_ID}" \
+. $ghx/releases/upload.sh "${CIX_REP_OWNER}" "${CIX_REP_NAME}" "${CIX_WORKER_PAT_SRC}" "${CIX_RELEASE_ID}" \
  "${CIX_ASSET_PATH}.sha256" "${CIX_ASSET_NAME}.sha256" "${CIX_UPLOAD_DST}"
