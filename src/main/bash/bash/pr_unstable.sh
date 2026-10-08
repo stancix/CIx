@@ -34,7 +34,7 @@ echo 'Commit...'
 
 echo 'Push...'
 
-. $cix/gh/push.sh --rep_owner "${VCS_REP_OWNER}" --rep_name "${VCS_REP_NAME}"
+. $cix/gh/push.sh --rep_owner "${VCS_REP_OWNER}" --rep_name "${VCS_REP_NAME}" --worker_pat_src GH_WORKER_PAT
 
 echo 'Release...'
 
