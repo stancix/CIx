@@ -1,9 +1,18 @@
 #!/usr/local/bin/bash
 
-. $checks/ints/eq.sh $# 2 'Wrong arguments!'
+unset CIX_SRC_COMMIT
+unset CIX_DST_BRANCH
 
-CIX_SRC_COMMIT="$1"
-CIX_DST_BRANCH="$2"
+while [[ $# -gt 0 ]]; do
+ . $checks/ints/gt.sh $# 1 'Wrong flags!'
+ case "$1" in
+  '--src_commit') [[ -v CIX_SRC_COMMIT ]] && . $checks/fail.sh "\"$1\" already used!"
+   CIX_SRC_COMMIT="$2"; shift 2;;
+  '--dst_branch') [[ -v CIX_DST_BRANCH ]] && . $checks/fail.sh "\"$1\" already used!"
+   CIX_DST_BRANCH="$2"; shift 2;;
+  *) . $checks/fail.sh "\"$1\" is not supported!";;
+ esac
+done
 
 . $checks/strings/require.sh CIX_SRC_COMMIT CIX_DST_BRANCH
 

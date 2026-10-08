@@ -8,3 +8,5 @@ TESTS='src/test/bash'
 . ${TESTS}/gh/config_keys_test.sh
 . ${TESTS}/gh/init_test.sh
 . ${TESTS}/git/merge_test.sh
+
+echo 'All tests passed.'

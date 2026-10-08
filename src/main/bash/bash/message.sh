@@ -1,11 +1,33 @@
 #!/usr/local/bin/bash
 
-. $checks/ints/eq.sh $# 4 'Wrong arguments!'
+unset CIX_REP_OWNER
+unset CIX_REP_NAME
+unset CIX_SRC_COMMIT
+unset CIX_DST_COMMIT
+unset CIX_BOT_ID
+unset CIX_BOT_SECRET_SRC
+unset CIX_CHAT_ID
 
-CIX_REP_OWNER="$1"
-CIX_REP_NAME="$2"
-CIX_SRC_COMMIT="$3"
-CIX_DST_COMMIT="$4"
+while [[ $# -gt 0 ]]; do
+ . $checks/ints/gt.sh $# 1 'Wrong flags!'
+ case "$1" in
+  '--rep_owner') [[ -v CIX_REP_OWNER ]] && . $checks/fail.sh "\"$1\" already used!"
+   CIX_REP_OWNER="$2"; shift 2;;
+  '--rep_name') [[ -v CIX_REP_NAME ]] && . $checks/fail.sh "\"$1\" already used!"
+   CIX_REP_NAME="$2"; shift 2;;
+  '--src_commit') [[ -v CIX_SRC_COMMIT ]] && . $checks/fail.sh "\"$1\" already used!"
+   CIX_SRC_COMMIT="$2"; shift 2;;
+  '--dst_commit') [[ -v CIX_DST_COMMIT ]] && . $checks/fail.sh "\"$1\" already used!"
+   CIX_DST_COMMIT="$2"; shift 2;;
+  '--bot_id') [[ -v CIX_BOT_ID ]] && . $checks/fail.sh "\"$1\" already used!"
+   CIX_BOT_ID="$2"; shift 2;;
+  '--bot_secret_src') [[ -v CIX_BOT_SECRET_SRC ]] && . $checks/fail.sh "\"$1\" already used!"
+   CIX_BOT_SECRET_SRC="$2"; shift 2;;
+  '--chat_id') [[ -v CIX_CHAT_ID ]] && . $checks/fail.sh "\"$1\" already used!"
+   CIX_CHAT_ID="$2"; shift 2;;
+  *) . $checks/fail.sh "\"$1\" is not supported!";;
+ esac
+done
 
 . $checks/strings/require.sh CIX_REP_OWNER CIX_REP_NAME CIX_SRC_COMMIT CIX_DST_COMMIT
 
@@ -25,7 +47,7 @@ CIX_RESULT_COMMIT="$(yq -Mer '.sha' "${SUBJECT}" 2> /dev/null)" \
 
 #
 
-. $checks/strings/require.sh WORKER_BOT_ID WORKER_BOT_SECRET WORKER_CHAT_ID
+. $checks/strings/require.sh CIX_BOT_ID CIX_CHAT_ID
 
 CIX_REP_OWNER_URL="https://github.com/${CIX_REP_OWNER}"
 CIX_REP_URL="https://github.com/${CIX_REP_OWNER}/${CIX_REP_NAME}"
@@ -58,4 +80,4 @@ SUBJECT="${CIX_WORKDIR}/build/zip/${CIX_REP_NAME}-${BUILD_VERSION}.zip"
 
 CIX_MESSAGE_DST="$(mktemp)"
 rm "${CIX_MESSAGE_DST}"
-. $tgbots/send_document.sh "${WORKER_BOT_ID}" WORKER_BOT_SECRET "${WORKER_CHAT_ID}" "${CIX_MESSAGE}" "${SUBJECT}" "${CIX_MESSAGE_DST}"
+. $tgbots/send_document.sh "${CIX_BOT_ID}" "${CIX_BOT_SECRET_SRC}" "${CIX_CHAT_ID}" "${CIX_MESSAGE}" "${SUBJECT}" "${CIX_MESSAGE_DST}"
