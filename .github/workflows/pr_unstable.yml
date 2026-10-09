@@ -6,31 +6,29 @@ on:
 jobs:
   build:
     runs-on: ubuntu-24.04
+    container:
+      image: docker.io/kepocnhh/cix-bash-amd64@sha256:76e752592a407472acf35be3175e4d06a66ac08f1f7fc57bb21056c396274d8d
+    defaults:
+      run:
+        working-directory: /.cix/workdir
+    env:
+      VCS_REP_OWNER: '${{github.event.repository.owner.login}}'
+      VCS_REP_NAME: '${{github.event.repository.name}}'
+      VCS_SRC_COMMIT: '${{github.event.pull_request.head.sha}}'
+      VCS_DST_BRANCH: '${{github.event.pull_request.base.ref}}'
+      VCS_DST_COMMIT: '${{github.event.pull_request.base.sha}}'
+      GH_WORKER_PAT: '${{secrets.GH_WORKER_PAT}}'
+      GPG_PASSWORD: '${{secrets.GPG_PASSWORD}}'
+      SIGNING_ALIAS: 'debug'
+      SIGNING_PASSWORD: '${{secrets.SIGNING_PASSWORD_DEBUG}}'
+      WORKER_BOT_ID: '${{secrets.WORKER_BOT_ID}}'
+      WORKER_BOT_SECRET: '${{secrets.WORKER_BOT_SECRET}}'
+      WORKER_CHAT_ID: '${{secrets.WORKER_CHAT_ID}}'
     steps:
       - env:
-          DOCKER_IMAGE: 'docker.io/kepocnhh/cix-bash-amd64'
-          DOCKER_IMAGE_DIGEST: '0b044da58f78d1b836ad789b64fda25ec6edfd48384d564239d1b33b6dcea46a'
-          SIGNING_PASSWORD: '${{secrets.SIGNING_PASSWORD_DEBUG}}'
-          GPG_PASSWORD: '${{secrets.GPG_PASSWORD}}'
-          GH_WORKER_PAT: '${{secrets.GH_WORKER_PAT}}'
-          WORKER_BOT_SECRET: '${{secrets.WORKER_BOT_SECRET}}'
+          SIGNING_KEYS: '${{secrets.SIGNING_KEYS_DEBUG}}'
+          GPG_WORKER_KEY: '${{secrets.GPG_WORKER_KEY}}'
         run: |
-          docker run \
-           -e VCS_REP_OWNER='${{github.event.repository.owner.login}}' \
-           -e VCS_REP_NAME='${{github.event.repository.name}}' \
-           -e VCS_SRC_COMMIT='${{github.event.pull_request.head.sha}}' \
-           -e VCS_DST_BRANCH='${{github.event.pull_request.base.ref}}' \
-           -e VCS_DST_COMMIT='${{github.event.pull_request.base.sha}}' \
-           -e GH_WORKER_PAT \
-           -e GPG_PASSWORD \
-           -e SIGNING_ALIAS='debug' \
-           -e SIGNING_PASSWORD \
-           -e WORKER_BOT_ID=${{secrets.WORKER_BOT_ID}} \
-           -e WORKER_BOT_SECRET \
-           -e WORKER_CHAT_ID=${{secrets.WORKER_CHAT_ID}} \
-           --interactive --detach --name container "${DOCKER_IMAGE}@sha256:${DOCKER_IMAGE_DIGEST}"
-          docker exec container /usr/local/bin/bash -c 'printf "%s" "${{secrets.SIGNING_KEYS_DEBUG}}" | base64 -d > "${CIX_SHARED}/${SIGNING_ALIAS}.pkcs12"'
-          docker exec container /usr/local/bin/bash -c 'printf "%s" "${{secrets.GPG_WORKER_KEY}}" > "${CIX_SHARED}/key.gpg"'
-          docker exec container /usr/local/bin/bash -c '$cix/bash/pr_unstable.sh'
-      - if: always()
-        run: docker rm -f container || true
+          printf '%s' "${SIGNING_KEYS}" | base64 -d > "${CIX_SHARED}/${SIGNING_ALIAS}.pkcs12"
+          printf '%s' "${GPG_WORKER_KEY}" > ${CIX_SHARED}/key.gpg
+      - run: $cix/bash/pr_unstable.sh
