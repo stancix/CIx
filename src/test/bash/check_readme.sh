@@ -18,8 +18,8 @@ EXPECTED_RELEASE="\`${BUILD_VERSION}\`
 | [GitHub](https://github.com/${REP_OWNER}/${REP_NAME}/releases/tag/${BUILD_VERSION})
 | [Key](https://${REP_OWNER}.github.io/${SIGNING_ALIAS}-public.pem)"
 
-EXPECTED_BUILD_AND_INSTALL="$ ./assemble.sh '${BUILD_VARIANT}' \\
- && ./src/test/bash/checks.sh '${BUILD_VARIANT}' \\
+EXPECTED_BUILD_AND_INSTALL="$ ./assemble.sh --build_variant '${BUILD_VARIANT}' \\
+ && ./src/test/bash/checks.sh --build_variant '${BUILD_VARIANT}' \\
  && unzip -d /opt/${REP_NAME}-${BUILD_VERSION} ./build/zip/${REP_NAME}-${BUILD_VERSION}.zip"
 
 EXPECTED_DOWNLOAD_AND_INSTALL="$ TMP_PATH=\"\$(mktemp)\"; \\
