@@ -2,7 +2,7 @@
 
 REP_OWNER='stancix'
 REP_NAME='CIx'
-VERSION_NAME='0.1.7'
+VERSION_NAME='0.1.8'
 
 unset BUILD_VARIANT
 
