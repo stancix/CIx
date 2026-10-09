@@ -62,6 +62,21 @@ SUBJECT="${CIX_WORKDIR}/build/zip/${CIX_REP_NAME}-${CIX_BUILD_VERSION}.zip"
 . $secrets/signing/verify.sh "${SUBJECT}" "${SUBJECT}.sig" "${CIX_PUBLIC_KEY}" 'sha256'
 . $hashes/sha256.sh "${SUBJECT}" "${SUBJECT}.sha256"
 
+#
+
+openssl ts -query -data "${SUBJECT}.sig" -sha256 -cert -out "${SUBJECT}.sig.tsq" \
+ || . $checks/fail.sh "Get \"${SUBJECT}.sig.tsq\" error!"
+
+HTTP_CODE="$(curl -m 8 -w '%{http_code}' \
+ --url 'https://freetsa.org/tsr' \
+ --header 'Content-Type: application/timestamp-query' \
+ --data-binary "@${SUBJECT}.sig.tsq" \
+ --output "${SUBJECT}.sig.tsr")" \
+ && $checks/ints/eq.sh "${HTTP_CODE}" '200' \
+ || . $checks/fail.sh "Get \"${SUBJECT}.sig.tsr\" error!"
+
+#
+
 CIX_REP_URL="https://github.com/${CIX_REP_OWNER}/${CIX_REP_NAME}"
 
 CIX_CHANGES_URL="${CIX_REP_URL}/compare/${CIX_DST_COMMIT}...${CIX_RESULT_COMMIT}"
@@ -103,3 +118,7 @@ rm "${CIX_UPLOAD_DST}"
 rm "${CIX_UPLOAD_DST}"
 . $ghx/releases/upload.sh "${CIX_REP_OWNER}" "${CIX_REP_NAME}" "${CIX_WORKER_PAT_SRC}" "${CIX_RELEASE_ID}" \
  "${CIX_ASSET_PATH}.sha256" "${CIX_ASSET_NAME}.sha256" "${CIX_UPLOAD_DST}"
+
+rm "${CIX_UPLOAD_DST}"
+. $ghx/releases/upload.sh "${CIX_REP_OWNER}" "${CIX_REP_NAME}" "${CIX_WORKER_PAT_SRC}" "${CIX_RELEASE_ID}" \
+ "${CIX_ASSET_PATH}.sig.tsr" "${CIX_ASSET_NAME}.sig.tsr" "${CIX_UPLOAD_DST}"
