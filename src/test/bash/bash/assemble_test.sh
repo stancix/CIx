@@ -23,7 +23,8 @@ TEST_ALIAS='testalias'
 CIX_WORKDIR="$(mktemp -d)"
 
 printf '%s' "\
-[[ '${TEST_VARIANT}' == \"\$1\" ]] || exit 1
+[[ '--build_variant' == \"\$1\" ]] || exit 1
+[[ \"${TEST_VARIANT}\" == \"\$2\" ]] || exit 1
 mkdir '${CIX_WORKDIR}/build/'
 mkdir '${CIX_WORKDIR}/build/yml/'
 printf '%s' '{
@@ -41,8 +42,7 @@ chmod +x "${CIX_WORKDIR}/assemble.sh"
 :> "${STDOUT}"
 :> "${STDERR}"
 CIX_WORKDIR="${CIX_WORKDIR}" \
- SIGNING_ALIAS="${TEST_ALIAS}" \
- "${SCRIPT}" "${TEST_REP_OWNER}" "${TEST_REP_NAME}" "${TEST_VARIANT}" > "${STDOUT}" 2> "${STDERR}"
+ "${SCRIPT}" --rep_owner "${TEST_REP_OWNER}" --rep_name "${TEST_REP_NAME}" --build_variant "${TEST_VARIANT}" --signing_alias "${TEST_ALIAS}" > "${STDOUT}" 2> "${STDERR}"
 . $asserts/ints/eq.sh "${SCRIPT}" "$?" 0
 . $asserts/files/empty.sh "${STDOUT}"
 . $asserts/files/empty.sh "${STDERR}"
