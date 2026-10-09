@@ -30,7 +30,7 @@ CIX_WORKER_KEY_ID='2CFF9BD0725E548B'
 CIX_WORKER_EMAIL='foo@bar.baz'
 CIX_WORKDIR="${CIX_WORKDIR}" \
 CIX_SHARED="${CIX_SHARED}" \
- "${SCRIPT}" "${CIX_WORKER_KEY_ID}" "${CIX_WORKER_EMAIL}" > "${STDOUT}" 2> "${STDERR}"
+ "${SCRIPT}" --worker_key_id "${CIX_WORKER_KEY_ID}" --worker_email "${CIX_WORKER_EMAIL}" > "${STDOUT}" 2> "${STDERR}"
 . $asserts/ints/eq.sh "${SCRIPT}" "$?" 0
 . $asserts/files/empty.sh "${STDOUT}"
 . $asserts/files/empty.sh "${STDERR}"
