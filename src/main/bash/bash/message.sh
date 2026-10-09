@@ -34,7 +34,7 @@ done
 SUBJECT="${CIX_WORKDIR}/build/yml/metadata.yml"
 . $checks/files/not_empty.sh "${SUBJECT}"
 
-BUILD_VERSION="$(yq -Mer '.build.version' "${SUBJECT}" 2> /dev/null)" \
+CIX_BUILD_VERSION="$(yq -Mer '.build.version' "${SUBJECT}" 2> /dev/null)" \
  || . $checks/fail.sh 'Get version error!'
 
 #
@@ -52,7 +52,7 @@ CIX_RESULT_COMMIT="$(yq -Mer '.sha' "${SUBJECT}" 2> /dev/null)" \
 CIX_REP_OWNER_URL="https://github.com/${CIX_REP_OWNER}"
 CIX_REP_URL="https://github.com/${CIX_REP_OWNER}/${CIX_REP_NAME}"
 
-SUBJECT="${CIX_SHARED}/gh_${BUILD_VERSION}_release.json"
+SUBJECT="${CIX_SHARED}/gh_${CIX_BUILD_VERSION}_release.json"
 . $checks/files/not_empty.sh "${SUBJECT}"
 
 CIX_RELEASE_URL="$(yq -Mer '.html_url' "${SUBJECT}")" \
@@ -64,7 +64,7 @@ CIX_CHANGES_URL="${CIX_REP_URL}/compare/${CIX_DST_COMMIT}...${CIX_RESULT_COMMIT}
 CIX_SRC_URL="${CIX_REP_URL}/commit/${CIX_SRC_COMMIT}"
 CIX_DST_URL="${CIX_REP_URL}/commit/${CIX_DST_COMMIT}"
 CIX_RESULT_URL="${CIX_REP_URL}/commit/${CIX_RESULT_COMMIT}"
-CIX_ARTIFACT_URL="${CIX_REP_URL}/releases/download/${BUILD_VERSION}/${CIX_REP_NAME}-${BUILD_VERSION}.zip"
+CIX_ARTIFACT_URL="${CIX_REP_URL}/releases/download/${CIX_BUILD_VERSION}/${CIX_REP_NAME}-${CIX_BUILD_VERSION}.zip"
 
 CIX_MESSAGE="[${CIX_REP_OWNER}](${CIX_REP_OWNER_URL}) / [${CIX_REP_NAME}](${CIX_REP_URL})
 
@@ -73,9 +73,9 @@ CIX_MESSAGE="[${CIX_REP_OWNER}](${CIX_REP_OWNER_URL}) / [${CIX_REP_NAME}](${CIX_
 \`| *\` [${CIX_SRC_COMMIT::7}](${CIX_SRC_URL})
 \`*\` [${CIX_DST_COMMIT::7}](${CIX_DST_URL})
 
-\`${BUILD_VERSION}\` / [Release](${CIX_RELEASE_URL}) / [Changes](${CIX_CHANGES_URL}) / [Artifact](${CIX_ARTIFACT_URL})"
+\`${CIX_BUILD_VERSION}\` / [Release](${CIX_RELEASE_URL}) / [Changes](${CIX_CHANGES_URL}) / [Artifact](${CIX_ARTIFACT_URL})"
 
-SUBJECT="${CIX_WORKDIR}/build/zip/${CIX_REP_NAME}-${BUILD_VERSION}.zip"
+SUBJECT="${CIX_WORKDIR}/build/zip/${CIX_REP_NAME}-${CIX_BUILD_VERSION}.zip"
 . $checks/files/not_empty.sh "${SUBJECT}"
 
 CIX_MESSAGE_DST="$(mktemp)"
