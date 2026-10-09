@@ -68,12 +68,24 @@ openssl ts -query -data "${SUBJECT}.sig" -sha256 -cert -out "${SUBJECT}.sig.tsq"
  || . $checks/fail.sh "Get \"${SUBJECT}.sig.tsq\" error!"
 
 HTTP_CODE="$(curl -m 8 -w '%{http_code}' \
+ --url 'https://freetsa.org/files/cacert.pem' \
+ --output "${CIX_SHARED}/tsa.pem")" \
+ && $checks/ints/eq.sh "${HTTP_CODE}" '200' \
+ || . $checks/fail.sh "Get \"${CIX_SHARED}/tsa.pem\" error!"
+
+HTTP_CODE="$(curl -m 8 -w '%{http_code}' \
  --url 'https://freetsa.org/tsr' \
  --header 'Content-Type: application/timestamp-query' \
  --data-binary "@${SUBJECT}.sig.tsq" \
  --output "${SUBJECT}.sig.tsr")" \
  && $checks/ints/eq.sh "${HTTP_CODE}" '200' \
  || . $checks/fail.sh "Get \"${SUBJECT}.sig.tsr\" error!"
+
+openssl ts -verify \
+ -in "${SUBJECT}.sig.tsr" \
+ -data "${SUBJECT}.sig" \
+ -CAfile "${CIX_SHARED}/tsa.pem" \
+ || . $checks/fail.sh "Verify \"${SUBJECT}.sig.tsr\" error!"
 
 #
 
