@@ -83,7 +83,7 @@ HTTP_CODE="$(curl -m 8 -w '%{http_code}' \
 
 openssl ts -verify \
  -in "${SUBJECT}.sig.tsr" \
- -data "${SUBJECT}.sig" \
+ -queryfile "${SUBJECT}.sig.tsq" \
  -CAfile "${CIX_SHARED}/tsa.pem" \
  || . $checks/fail.sh "Verify \"${SUBJECT}.sig.tsr\" error!"
 
