@@ -11,8 +11,10 @@ CIX_COMMIT_MESSAGE="$2"
 
 . $checks/strings/empty.sh "$(git -C "${CIX_WORKDIR}" ls-files --others --exclude-standard)" 'Git untracked error!'
 
-git -C "${CIX_WORKDIR}" commit -S -m "${CIX_COMMIT_MESSAGE}" \
+GPG_HOMEDIR="${CIX_SHARED}/.gnupg" \
+ git -C "${CIX_WORKDIR}" commit -S -m "${CIX_COMMIT_MESSAGE}" \
  || . $checks/fail.sh 'Git sign commit error!'
 
-git -C "${CIX_WORKDIR}" tag -s "${CIX_COMMIT_TAG}" -m "${CIX_COMMIT_MESSAGE}" \
+GPG_HOMEDIR="${CIX_SHARED}/.gnupg" \
+ git -C "${CIX_WORKDIR}" tag -s "${CIX_COMMIT_TAG}" -m "${CIX_COMMIT_MESSAGE}" \
  || . $checks/fail.sh 'Git sign tag error!'

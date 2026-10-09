@@ -57,7 +57,7 @@ git -C "${CIX_WORKDIR}" switch "${VCS_DST_BRANCH}" --quiet \
 :> "${STDOUT}"
 :> "${STDERR}"
 CIX_WORKDIR="${CIX_WORKDIR}" \
- "${SCRIPT}" "${VCS_SRC_COMMIT}" > "${STDOUT}" 2> "${STDERR}"
+ "${SCRIPT}" --src_commit "${VCS_SRC_COMMIT}" > "${STDOUT}" 2> "${STDERR}"
 . $asserts/ints/eq.sh "${SCRIPT}" "$?" 0
 . $asserts/files/empty.sh "${STDOUT}"
 . $asserts/files/empty.sh "${STDERR}"

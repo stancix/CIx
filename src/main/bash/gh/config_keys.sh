@@ -19,7 +19,7 @@ done
 CIX_WORKER_KEY="${CIX_SHARED}/key.gpg"
 . $checks/files/not_empty.sh "${CIX_WORKER_KEY}"
 
-CIX_FILE_KEYS=($(gpg --show-keys --quiet --keyid-format long --with-colons "${CIX_WORKER_KEY}" | grep sec)) \
+CIX_FILE_KEYS=($(gpg --homedir "${CIX_SHARED}/.gnupg" --show-keys --quiet --keyid-format long --with-colons "${CIX_WORKER_KEY}" | grep sec)) \
  && $checks/ints/eq.sh "${#CIX_FILE_KEYS[@]}" 1 \
  || . $checks/fail.sh 'Get file keys error!'
 
@@ -30,10 +30,10 @@ CIX_FILE_KEY_ID="${CIX_FILE_KEYS[4]}"
 
 #
 
-gpg --batch --quiet --import "${CIX_WORKER_KEY}" \
+gpg --homedir "${CIX_SHARED}/.gnupg" --batch --quiet --import "${CIX_WORKER_KEY}" \
  || . $checks/fail.sh 'GPG import error!'
 
-CIX_ACTUAL_KEYS=($(gpg --list-keys --quiet --keyid-format long --with-colons | grep pub)) \
+CIX_ACTUAL_KEYS=($(gpg --homedir "${CIX_SHARED}/.gnupg" --list-keys --quiet --keyid-format long --with-colons | grep pub)) \
  && $checks/ints/eq.sh "${#CIX_ACTUAL_KEYS[@]}" 1 \
  || . $checks/fail.sh 'Get actual keys error!'
 
@@ -44,7 +44,7 @@ CIX_ACTUAL_KEY_ID="${CIX_ACTUAL_KEYS[4]}"
 
 #
 
-CIX_GPG_UIDS="$(gpg --list-keys --quiet --keyid-format long --with-colons | grep uid)" \
+CIX_GPG_UIDS="$(gpg --homedir "${CIX_SHARED}/.gnupg" --list-keys --quiet --keyid-format long --with-colons | grep uid)" \
  && $checks/strings/contains.sh "${CIX_GPG_UIDS}" "${CIX_WORKER_EMAIL}" \
  || . $checks/fail.sh 'Wrong GPG email!'
 

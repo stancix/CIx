@@ -25,7 +25,7 @@ CIX_WORKDIR="$(mktemp -d)"
 CIX_WORKDIR="${CIX_WORKDIR}" \
  VCS_SRC_COMMIT='3f964efe91de6ff69cd630f59fd6c6a811dab76a' \
  VCS_DST_BRANCH='test_dst' \
- "${SCRIPT}" "${VCS_REP_OWNER}" "${VCS_REP_NAME}" > "${STDOUT}" 2> "${STDERR}"
+ "${SCRIPT}" --rep_owner "${VCS_REP_OWNER}" --rep_name "${VCS_REP_NAME}" > "${STDOUT}" 2> "${STDERR}"
 . $asserts/ints/eq.sh "${SCRIPT}" "$?" 0
 . $asserts/files/empty.sh "${STDOUT}"
 . $asserts/files/empty.sh "${STDERR}"
