@@ -54,7 +54,8 @@ fi
 
 #
 
-if [[ -d "${BUILD_WORKDIR}/build/" ]]; then echo 'Build dir exists!' >&2; exit 1; fi
+if [[ -d "${BUILD_WORKDIR}/build/" ]];
+ then echo 'Build dir exists!' >&2; exit 1; fi
 
 mkdir "${BUILD_WORKDIR}/build/"
 mkdir -p "${BUILD_WORKDIR}/build/yml/"
@@ -76,7 +77,11 @@ if [[ ! -s "${BUILD_WORKDIR}/LICENSE" ]]; then
 if [[ ! -s "${BUILD_WORKDIR}/README.md" ]]; then
  echo 'No readme!' >&2; exit 1; fi
 
-mkdir -p "${BUILD_WORKDIR}/build/zip/"
-SUBJECT="${BUILD_WORKDIR}/build/zip/${REP_NAME}-${BUILD_VERSION}.zip"
-zip -Xqr9 "${SUBJECT}" "${BUILD_WORKDIR}/src/main/bash/" "${BUILD_WORKDIR}/LICENSE" "${BUILD_WORKDIR}/README.md"
-if [[ $? -ne 0 ]]; then echo 'Zip error!' >&2; exit 1; fi
+#
+
+mkdir -p "${BUILD_WORKDIR}/build/tar/"
+SUBJECT="${BUILD_WORKDIR}/build/tar/${REP_NAME}-${BUILD_VERSION}.tar.gz"
+
+(set -x; cd "${BUILD_WORKDIR}" \
+ && tar -czf "${SUBJECT}" './src/main/bash/' './LICENSE' './README.md')
+if [[ $? != 0 ]]; then echo "Tar ${REP_NAME}-${BUILD_VERSION} error!" >&2; exit 1; fi
