@@ -50,7 +50,7 @@ CIX_RESULT_COMMIT="$(yq -Mer '.sha' "${SUBJECT}" 2> /dev/null)" \
 echo 'Get public key...'
 
 CIX_PUBLIC_KEY="${CIX_SHARED}/${CIX_REP_GROUP}_${CIX_SIGNING_ALIAS}.pub"
-. $ghx/pages/file.sh "${CIX_REP_OWNER}" "${CIX_REP_GROUP}_${CIX_SIGNING_ALIAS}.pub" "${CIX_PUBLIC_KEY}"
+. $ghx/pages/file.sh "${CIX_REP_GROUP}" "${CIX_REP_GROUP}_${CIX_SIGNING_ALIAS}.pub" "${CIX_PUBLIC_KEY}"
 
 CIX_KEYSTORE="${CIX_SHARED}/${CIX_SIGNING_ALIAS}.pkcs12"
 CIX_PRIVATE_KEY="${CIX_SHARED}/${CIX_SIGNING_ALIAS}.key"
