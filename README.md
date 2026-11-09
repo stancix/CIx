@@ -38,7 +38,8 @@ $ TMP_PATH="$(mktemp)"; \
 ```
 $ ./assemble.sh --build_variant 'unstable' \
  && ./src/test/bash/checks.sh --build_variant 'unstable' \
- && unzip -d /opt/CIx-0.2.1-UNSTABLE ./build/zip/CIx-0.2.1-UNSTABLE.zip
+ && mkdir '/opt/CIx-0.2.1-UNSTABLE' \
+ && tar -xf './build/tar/CIx-0.2.1-UNSTABLE.tar.gz' -C '/opt/CIx-0.2.1-UNSTABLE/'
 ```
 
 ### Download and Install
