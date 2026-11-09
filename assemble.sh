@@ -9,8 +9,7 @@ unset BUILD_VARIANT
 unset BUILD_WORKDIR
 
 while [[ $# -gt 0 ]]; do
- if [[ $# -lt 2 ]]; then
-  echo 'Wrong flags!' >&2; exit 1; fi
+ if [[ $# -lt 2 ]]; then echo 'Wrong flags!' >&2; exit 1; fi
  case "$1" in
   '--build_variant')
    if [[ -v BUILD_VARIANT ]]; then echo "\"$1\" already used!" >&2; exit 1; fi
