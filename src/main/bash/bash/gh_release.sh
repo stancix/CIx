@@ -57,7 +57,7 @@ CIX_CRT="${CIX_SHARED}/${CIX_SIGNING_ALIAS}.crt"
 . $secrets/pkcs12/crt.sh "${CIX_KEYSTORE}" "${CIX_CRT}" "${CIX_SIGNING_PASSWORD_SRC}"
 . $secrets/x509/valid.sh "${CIX_CRT}"
 
-SUBJECT="${CIX_WORKDIR}/build/zip/${CIX_REP_NAME}-${CIX_BUILD_VERSION}.zip"
+SUBJECT="${CIX_WORKDIR}/build/tar/${CIX_REP_NAME}-${CIX_BUILD_VERSION}.tar.gz"
 . $secrets/signing/sign.sh "${SUBJECT}" "${SUBJECT}.sig" "${CIX_PRIVATE_KEY}" 'sha256' "${CIX_SIGNING_PASSWORD_SRC}"
 . $secrets/signing/verify.sh "${SUBJECT}" "${SUBJECT}.sig" "${CIX_PUBLIC_KEY}" 'sha256'
 . $hashes/sha256.sh "${SUBJECT}" "${SUBJECT}.sha256"
@@ -115,8 +115,8 @@ SUBJECT="${CIX_SHARED}/gh_${CIX_BUILD_VERSION}_release.json"
 CIX_RELEASE_ID="$(yq -Mer '.id' "${SUBJECT}" 2> /dev/null)" \
  || . $checks/fail.sh 'Get release ID error!'
 
-CIX_ASSET_PATH="${CIX_WORKDIR}/build/zip/${CIX_REP_NAME}-${CIX_BUILD_VERSION}.zip"
-CIX_ASSET_NAME="${CIX_REP_NAME}-${CIX_BUILD_VERSION}.zip"
+CIX_ASSET_PATH="${CIX_WORKDIR}/build/tar/${CIX_REP_NAME}-${CIX_BUILD_VERSION}.tar.gz"
+CIX_ASSET_NAME="${CIX_REP_NAME}-${CIX_BUILD_VERSION}.tar.gz"
 CIX_UPLOAD_DST="$(mktemp)"
 
 rm "${CIX_UPLOAD_DST}"
