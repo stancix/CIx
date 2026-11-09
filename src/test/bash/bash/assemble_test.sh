@@ -32,8 +32,8 @@ printf '%s' '{
  \"build\":{\"variant\":\"${TEST_VARIANT}\",\"version\":\"${TEST_VERSION}\"},
  \"signing\":{\"alias\":\"${TEST_ALIAS}\"}
 }' > '${CIX_WORKDIR}/build/yml/metadata.yml'
-mkdir '${CIX_WORKDIR}/build/zip/'
-printf '42' > '${CIX_WORKDIR}/build/zip/${TEST_REP_NAME}-${TEST_VERSION}.zip'
+mkdir '${CIX_WORKDIR}/build/tar/'
+printf '42' > '${CIX_WORKDIR}/build/tar/${TEST_REP_NAME}-${TEST_VERSION}.tar.gz'
 " > "${CIX_WORKDIR}/assemble.sh"
 chmod +x "${CIX_WORKDIR}/assemble.sh"
 
