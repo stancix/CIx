@@ -85,6 +85,6 @@ if [[ ! -s "${BUILD_WORKDIR}/README.md" ]]; then
 mkdir -p "${BUILD_WORKDIR}/build/tar/"
 SUBJECT="${BUILD_WORKDIR}/build/tar/${REP_NAME}-${BUILD_VERSION}.tar.gz"
 
-(set -x; cd "${BUILD_WORKDIR}" \
+(BASH_XTRACEFD=1; set -x; cd "${BUILD_WORKDIR}" \
  && tar -czf "${SUBJECT}" './src/main/bash/' './LICENSE' './README.md')
 if [[ $? != 0 ]]; then echo "Tar ${REP_NAME}-${BUILD_VERSION} error!" >&2; exit 1; fi
