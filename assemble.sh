@@ -27,6 +27,8 @@ done
 case "${BUILD_VARIANT}" in
  'unstable') BUILD_VERSION="${VERSION_NAME}-UNSTABLE"
   SIGNING_ALIAS='debug';;
+ 'release') BUILD_VERSION="${VERSION_NAME}"
+  SIGNING_ALIAS='release';;
  '') echo 'No build variant!' >&2; exit 1;;
  *) echo "Build variant \"${BUILD_VARIANT}\" is not supported!" >&2; exit 1;;
 esac
