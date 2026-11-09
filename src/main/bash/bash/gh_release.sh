@@ -31,7 +31,10 @@ done
 SUBJECT="${CIX_WORKDIR}/build/yml/metadata.yml"
 . $checks/files/not_empty.sh "${SUBJECT}"
 
-CIX_BUILD_VERSION="$(yq -Mer '.build.version' "${SUBJECT}" 2> /dev/null)" \
+CIX_REP_GROUP="$(yq -Mer -p=yml -o=json '.repository.group' "${SUBJECT}" 2> /dev/null)" \
+ || . $checks/fail.sh 'Get rep group error!'
+
+CIX_BUILD_VERSION="$(yq -Mer -p=yml -o=json '.build.version' "${SUBJECT}" 2> /dev/null)" \
  || . $checks/fail.sh 'Get version error!'
 
 #
@@ -46,8 +49,8 @@ CIX_RESULT_COMMIT="$(yq -Mer '.sha' "${SUBJECT}" 2> /dev/null)" \
 
 echo 'Get public key...'
 
-CIX_PUBLIC_KEY="${CIX_SHARED}/${CIX_SIGNING_ALIAS}_public.pem"
-. $ghx/pages/file.sh "${CIX_REP_OWNER}" "${CIX_SIGNING_ALIAS}-public.pem" "${CIX_PUBLIC_KEY}"
+CIX_PUBLIC_KEY="${CIX_SHARED}/${CIX_REP_GROUP}_${CIX_SIGNING_ALIAS}.pub"
+. $ghx/pages/file.sh "${CIX_REP_GROUP}" "${CIX_REP_GROUP}_${CIX_SIGNING_ALIAS}.pub" "${CIX_PUBLIC_KEY}"
 
 CIX_KEYSTORE="${CIX_SHARED}/${CIX_SIGNING_ALIAS}.pkcs12"
 CIX_PRIVATE_KEY="${CIX_SHARED}/${CIX_SIGNING_ALIAS}.key"
@@ -57,7 +60,7 @@ CIX_CRT="${CIX_SHARED}/${CIX_SIGNING_ALIAS}.crt"
 . $secrets/pkcs12/crt.sh "${CIX_KEYSTORE}" "${CIX_CRT}" "${CIX_SIGNING_PASSWORD_SRC}"
 . $secrets/x509/valid.sh "${CIX_CRT}"
 
-SUBJECT="${CIX_WORKDIR}/build/zip/${CIX_REP_NAME}-${CIX_BUILD_VERSION}.zip"
+SUBJECT="${CIX_WORKDIR}/build/tar/${CIX_REP_NAME}-${CIX_BUILD_VERSION}.tar.gz"
 . $secrets/signing/sign.sh "${SUBJECT}" "${SUBJECT}.sig" "${CIX_PRIVATE_KEY}" 'sha256' "${CIX_SIGNING_PASSWORD_SRC}"
 . $secrets/signing/verify.sh "${SUBJECT}" "${SUBJECT}.sig" "${CIX_PUBLIC_KEY}" 'sha256'
 . $hashes/sha256.sh "${SUBJECT}" "${SUBJECT}.sha256"
@@ -115,8 +118,8 @@ SUBJECT="${CIX_SHARED}/gh_${CIX_BUILD_VERSION}_release.json"
 CIX_RELEASE_ID="$(yq -Mer '.id' "${SUBJECT}" 2> /dev/null)" \
  || . $checks/fail.sh 'Get release ID error!'
 
-CIX_ASSET_PATH="${CIX_WORKDIR}/build/zip/${CIX_REP_NAME}-${CIX_BUILD_VERSION}.zip"
-CIX_ASSET_NAME="${CIX_REP_NAME}-${CIX_BUILD_VERSION}.zip"
+CIX_ASSET_PATH="${CIX_WORKDIR}/build/tar/${CIX_REP_NAME}-${CIX_BUILD_VERSION}.tar.gz"
+CIX_ASSET_NAME="${CIX_REP_NAME}-${CIX_BUILD_VERSION}.tar.gz"
 CIX_UPLOAD_DST="$(mktemp)"
 
 rm "${CIX_UPLOAD_DST}"

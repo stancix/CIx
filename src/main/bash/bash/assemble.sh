@@ -53,5 +53,5 @@ ACTUAL_ALIAS="$(yq -Mer '.signing.alias' "${SUBJECT}" 2> /dev/null)" \
 CIX_BUILD_VERSION="$(yq -Mer '.build.version' "${SUBJECT}" 2> /dev/null)" \
  || . $checks/fail.sh 'Get version error!'
 
-SUBJECT="${CIX_WORKDIR}/build/zip/${CIX_REP_NAME}-${CIX_BUILD_VERSION}.zip"
+SUBJECT="${CIX_WORKDIR}/build/tar/${CIX_REP_NAME}-${CIX_BUILD_VERSION}.tar.gz"
 . $checks/files/not_empty.sh "${SUBJECT}"
