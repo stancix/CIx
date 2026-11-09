@@ -1,5 +1,6 @@
 #!/usr/local/bin/bash
 
+REP_GROUP='stanprojects'
 REP_OWNER='stancix'
 REP_NAME='CIx'
 VERSION_NAME='0.2.1'
@@ -62,6 +63,7 @@ mkdir -p "${BUILD_WORKDIR}/build/yml/"
 SUBJECT="${BUILD_WORKDIR}/build/yml/metadata.yml"
 echo "\
 repository:
+ group: '${REP_GROUP}'
  owner: '${REP_OWNER}'
  name: '${REP_NAME}'
 build:
