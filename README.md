@@ -5,24 +5,26 @@ A few continuous integration scripts.
 
 ## Release
 
-`0.0.1`
-| [GitHub](https://github.com/stancix/CIx/releases/tag/0.0.1)
-| [Key](https://stancix.github.io/release-public.pem)
+`0.2.2`
+| [GitHub](https://github.com/stancix/CIx/releases/tag/0.2.2)
+| [Key](https://stanprojects.github.io/stanprojects_release.pub)
 
 ### Build and Install
 
 ```
-$ ./assemble.sh \
- && ./src/test/bash/unit_test.sh \
- && unzip -d /opt/CIx-0.0.1 ./build/zip/CIx-0.0.1.zip
+./assemble.sh --build_variant 'release' \
+ && ./src/test/bash/checks.sh --build_variant 'release' \
+ && mkdir '/opt/CIx-0.2.2/' \
+ && tar -xf './build/tar/CIx-0.2.2.tar.gz' -C '/opt/CIx-0.2.2/'
 ```
 
 ### Download and Install
 
 ```
-$ TMP_PATH="$(mktemp)"; \
- curl -L 'https://github.com/stancix/CIx/releases/download/0.0.1/CIx-0.0.1.zip' \
-  -o "${TMP_PATH}" && unzip -d /opt/CIx-0.0.1 "${TMP_PATH}" && rm "${TMP_PATH}"
+TMP_PATH="$(mktemp)" \
+ && curl -m 32 -f -L 'https://github.com/stancix/CIx/releases/download/0.2.2/CIx-0.2.2.tar.gz' -o "${TMP_PATH}" \
+ && mkdir '/opt/CIx-0.2.2/' \
+ && tar -xf "${TMP_PATH}" -C '/opt/CIx-0.2.2/' && rm "${TMP_PATH}"
 ```
 
 ---
