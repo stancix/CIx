@@ -3,6 +3,7 @@
 SUBJECT='build/yml/metadata.yml'
 . $asserts/files/not_empty.sh "${SUBJECT}"
 
+REP_GROUP="$(yq -Mer -p=yml -o=json '.repository.group' "${SUBJECT}")" || exit 1
 REP_OWNER="$(yq -Mer -p=yml -o=json '.repository.owner' "${SUBJECT}")" || exit 1
 REP_NAME="$(yq -Mer -p=yml -o=json '.repository.name' "${SUBJECT}")" || exit 1
 BUILD_VARIANT="$(yq -Mer -p=yml -o=json '.build.variant' "${SUBJECT}")" || exit 1
@@ -16,7 +17,7 @@ EXPECTED_NAME="# ${REP_NAME}"
 
 EXPECTED_RELEASE="\`${BUILD_VERSION}\`
 | [GitHub](https://github.com/${REP_OWNER}/${REP_NAME}/releases/tag/${BUILD_VERSION})
-| [Key](https://${REP_OWNER}.github.io/${SIGNING_ALIAS}-public.pem)"
+| [Key](https://${REP_GROUP}.github.io/${REP_GROUP}_${SIGNING_ALIAS}.pub)"
 
 EXPECTED_BUILD_AND_INSTALL="$ ./assemble.sh --build_variant '${BUILD_VARIANT}' \\
  && ./src/test/bash/checks.sh --build_variant '${BUILD_VARIANT}' \\
