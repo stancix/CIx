@@ -36,18 +36,19 @@ $ TMP_PATH="$(mktemp)"; \
 ### Build and Install
 
 ```
-$ ./assemble.sh --build_variant 'unstable' \
+./assemble.sh --build_variant 'unstable' \
  && ./src/test/bash/checks.sh --build_variant 'unstable' \
- && mkdir '/opt/CIx-0.2.1-UNSTABLE' \
+ && mkdir '/opt/CIx-0.2.1-UNSTABLE/' \
  && tar -xf './build/tar/CIx-0.2.1-UNSTABLE.tar.gz' -C '/opt/CIx-0.2.1-UNSTABLE/'
 ```
 
 ### Download and Install
 
 ```
-$ TMP_PATH="$(mktemp)"; \
- curl -L 'https://github.com/stancix/CIx/releases/download/0.2.1-UNSTABLE/CIx-0.2.1-UNSTABLE.zip' \
-  -o "${TMP_PATH}" && unzip -d /opt/CIx-0.2.1-UNSTABLE "${TMP_PATH}" && rm "${TMP_PATH}"
+TMP_PATH="$(mktemp)" \
+ && curl -m 32 -f -L 'https://github.com/stancix/CIx/releases/download/0.2.1-UNSTABLE/CIx-0.2.1-UNSTABLE.tar.gz' -o "${TMP_PATH}" \
+ && mkdir '/opt/CIx-0.2.1-UNSTABLE/' \
+ && tar -xf "${TMP_PATH}" -C '/opt/CIx-0.2.1-UNSTABLE/' && rm "${TMP_PATH}"
 ```
 
 ---

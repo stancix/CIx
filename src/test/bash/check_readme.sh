@@ -19,15 +19,15 @@ EXPECTED_RELEASE="\`${BUILD_VERSION}\`
 | [GitHub](https://github.com/${REP_OWNER}/${REP_NAME}/releases/tag/${BUILD_VERSION})
 | [Key](https://${REP_GROUP}.github.io/${REP_GROUP}_${SIGNING_ALIAS}.pub)"
 
-EXPECTED_BUILD_AND_INSTALL="$ ./assemble.sh --build_variant '${BUILD_VARIANT}' \\
+EXPECTED_BUILD_AND_INSTALL="./assemble.sh --build_variant '${BUILD_VARIANT}' \\
  && ./src/test/bash/checks.sh --build_variant '${BUILD_VARIANT}' \\
- && mkdir '/opt/${REP_NAME}-${BUILD_VERSION}' \\
+ && mkdir '/opt/${REP_NAME}-${BUILD_VERSION}/' \\
  && tar -xf './build/tar/${REP_NAME}-${BUILD_VERSION}.tar.gz' -C '/opt/${REP_NAME}-${BUILD_VERSION}/'"
 
-EXPECTED_DOWNLOAD_AND_INSTALL="$ TMP_PATH=\"\$(mktemp)\" \\
+EXPECTED_DOWNLOAD_AND_INSTALL="TMP_PATH=\"\$(mktemp)\" \\
  && curl -m 32 -f -L 'https://github.com/${REP_OWNER}/${REP_NAME}/releases/download/${BUILD_VERSION}/${REP_NAME}-${BUILD_VERSION}.tar.gz' -o \"\${TMP_PATH}\" \\
- && mkdir \"/opt/${REP_NAME}-${BUILD_VERSION}\" \\
- && tar -xf \"\${TMP_PATH}\" -C \"/opt/${REP_NAME}-${BUILD_VERSION}\" && rm \"\${TMP_PATH}\""
+ && mkdir '/opt/${REP_NAME}-${BUILD_VERSION}/' \\
+ && tar -xf \"\${TMP_PATH}\" -C '/opt/${REP_NAME}-${BUILD_VERSION}/' && rm \"\${TMP_PATH}\""
 
 EXPECTED_TEXTS=(
  "${EXPECTED_NAME}"
