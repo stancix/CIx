@@ -21,11 +21,13 @@ EXPECTED_RELEASE="\`${BUILD_VERSION}\`
 
 EXPECTED_BUILD_AND_INSTALL="$ ./assemble.sh --build_variant '${BUILD_VARIANT}' \\
  && ./src/test/bash/checks.sh --build_variant '${BUILD_VARIANT}' \\
- && unzip -d /opt/${REP_NAME}-${BUILD_VERSION} ./build/zip/${REP_NAME}-${BUILD_VERSION}.zip"
+ && mkdir \"/opt/${REP_NAME}-${BUILD_VERSION}\" \\
+ && tar -xf ./build/tar/${REP_NAME}-${BUILD_VERSION}.tar.gz -C \"/opt/${REP_NAME}-${BUILD_VERSION}/\""
 
-EXPECTED_DOWNLOAD_AND_INSTALL="$ TMP_PATH=\"\$(mktemp)\"; \\
- curl -L 'https://github.com/${REP_OWNER}/${REP_NAME}/releases/download/${BUILD_VERSION}/${REP_NAME}-${BUILD_VERSION}.zip' \\
-  -o \"\${TMP_PATH}\" && unzip -d /opt/${REP_NAME}-${BUILD_VERSION} \"\${TMP_PATH}\" && rm \"\${TMP_PATH}\""
+EXPECTED_DOWNLOAD_AND_INSTALL="$ TMP_PATH=\"\$(mktemp)\" \\
+ && curl -m 32 -f -L 'https://github.com/${REP_OWNER}/${REP_NAME}/releases/download/${BUILD_VERSION}/${REP_NAME}-${BUILD_VERSION}.tar.gz' -o \"\${TMP_PATH}\" \\
+ && mkdir \"/opt/${REP_NAME}-${BUILD_VERSION}\" \\
+ && tar -xf \"\${TMP_PATH}\" -C \"/opt/${REP_NAME}-${BUILD_VERSION}\" && rm \"\${TMP_PATH}\""
 
 EXPECTED_TEXTS=(
  "${EXPECTED_NAME}"
