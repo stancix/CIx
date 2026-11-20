@@ -7,28 +7,29 @@ jobs:
   build:
     runs-on: ubuntu-24.04
     container:
-      image: docker.io/kepocnhh/cix-bash-amd64@sha256:6ddfc0492fb9726892b93796fc6172e76d0ae3038e7e0062b456b609313ecb6d
+      image: docker.io/kepocnhh/cix-bash-amd64@sha256:fbad2399f9972461b72833f420a0bfa2ab7367a9bd28b83a87dd14e8abee4649
     defaults:
       run:
         working-directory: /.cix/workdir
     env:
-      VCS_REP_OWNER: '${{github.event.repository.owner.login}}'
-      VCS_REP_NAME: '${{github.event.repository.name}}'
-      VCS_SRC_COMMIT: '${{github.event.pull_request.head.sha}}'
-      VCS_DST_BRANCH: '${{github.event.pull_request.base.ref}}'
-      VCS_DST_COMMIT: '${{github.event.pull_request.base.sha}}'
+      BUILD_VARIANT: 'unstable'
       GH_WORKER_PAT: '${{secrets.GH_WORKER_PAT}}'
       GPG_PASSWORD: '${{secrets.GPG_PASSWORD}}'
       SIGNING_ALIAS: 'debug'
       SIGNING_PASSWORD: '${{secrets.SIGNING_PASSWORD_DEBUG}}'
+      VCS_DST_BRANCH: '${{github.event.pull_request.base.ref}}'
+      VCS_DST_COMMIT: '${{github.event.pull_request.base.sha}}'
+      VCS_REP_NAME: '${{github.event.repository.name}}'
+      VCS_REP_OWNER: '${{github.event.repository.owner.login}}'
+      VCS_SRC_COMMIT: '${{github.event.pull_request.head.sha}}'
       WORKER_BOT_ID: '${{secrets.WORKER_BOT_ID}}'
       WORKER_BOT_SECRET: '${{secrets.WORKER_BOT_SECRET}}'
       WORKER_CHAT_ID: '${{secrets.WORKER_CHAT_ID}}'
     steps:
       - env:
-          SIGNING_KEYS: '${{secrets.SIGNING_KEYS_DEBUG}}'
           GPG_WORKER_KEY: '${{secrets.GPG_WORKER_KEY}}'
+          SIGNING_KEYS: '${{secrets.SIGNING_KEYS_DEBUG}}'
         run: |
           printf '%s' "${SIGNING_KEYS}" | base64 -d > "${CIX_SHARED}/${SIGNING_ALIAS}.pkcs12"
           printf '%s' "${GPG_WORKER_KEY}" > ${CIX_SHARED}/key.gpg
-      - run: $cix/bash/pr_unstable.sh
+      - run: $cix/bash/pr.sh
