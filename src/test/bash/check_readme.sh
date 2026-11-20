@@ -17,7 +17,7 @@ EXPECTED_NAME="# ${REP_NAME}"
 
 EXPECTED_RELEASE="\`${BUILD_VERSION}\`
 | [GitHub](https://github.com/${REP_OWNER}/${REP_NAME}/releases/tag/${BUILD_VERSION})
-| [Key](https://${REP_GROUP}.github.io/${REP_GROUP}_${SIGNING_ALIAS}.pub)"
+| [Key](https://${REP_GROUP}.github.io/src/main/res/${REP_GROUP}_${SIGNING_ALIAS}.pub)"
 
 EXPECTED_BUILD_AND_INSTALL="./assemble.sh --build_variant '${BUILD_VARIANT}' \\
  && ./src/test/bash/checks.sh --build_variant '${BUILD_VARIANT}' \\
