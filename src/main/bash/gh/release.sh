@@ -1,40 +1,45 @@
 #!/usr/local/bin/bash
 
-. $checks/ints/eq.sh $# 3 'Wrong arguments!'
+unset CIX_REP_OWNER
+unset CIX_REP_NAME
+unset CIX_RELEASE_VERSION
+unset CIX_RELEASE_MESSAGE
+unset CIX_IS_PRERELEASE
+unset CIX_WORKER_PAT_SRC
 
-CIX_RELEASE_VERSION="$1"
-CIX_RELEASE_MESSAGE="$2"
-CIX_IS_PRERELEASE="$3"
+while [[ $# -gt 0 ]]; do
+ . $checks/ints/gt.sh $# 1 'Wrong flags!'
+ case "$1" in
+  '--rep_owner') [[ -v CIX_REP_OWNER ]] && . $checks/fail.sh "\"$1\" already used!"
+   CIX_REP_OWNER="$2"; shift 2;;
+  '--rep_name') [[ -v CIX_REP_NAME ]] && . $checks/fail.sh "\"$1\" already used!"
+   CIX_REP_NAME="$2"; shift 2;;
+  '--version') [[ -v CIX_RELEASE_VERSION ]] && . $checks/fail.sh "\"$1\" already used!"
+   CIX_RELEASE_VERSION="$2"; shift 2;;
+  '--message') [[ -v CIX_RELEASE_MESSAGE ]] && . $checks/fail.sh "\"$1\" already used!"
+   CIX_RELEASE_MESSAGE="$2"; shift 2;;
+  '--is_prerelease') [[ -v CIX_IS_PRERELEASE ]] && . $checks/fail.sh "\"$1\" already used!"
+   CIX_IS_PRERELEASE="$2"; shift 2;;
+  '--worker_pat_src') [[ -v CIX_WORKER_PAT_SRC ]] && . $checks/fail.sh "\"$1\" already used!"
+   CIX_WORKER_PAT_SRC="$2"; shift 2;;
+  *) . $checks/fail.sh "\"$1\" is not supported!";;
+ esac
+done
 
-#. $mt/checks/one_of.sh "${PRERELEASE}" 'false' 'true' # todo
+. $checks/strings/any.sh "${CIX_IS_PRERELEASE}" 'false' 'true' 'Wrong prerelease!'
 
-. $checks/strings/require.sh VCS_REP_OWNER VCS_REP_NAME CIX_RELEASE_VERSION CIX_RELEASE_MESSAGE GITHUB_WORKER_PAT
+. $checks/strings/require.sh CIX_REP_OWNER CIX_REP_NAME CIX_RELEASE_VERSION CIX_RELEASE_MESSAGE
 
 echo "Check release \"${CIX_RELEASE_VERSION}\"..."
 
-. $ghx/releases/tags/not_exists.sh "${VCS_REP_OWNER}" "${VCS_REP_NAME}" "${CIX_RELEASE_VERSION}"
+. $ghx/releases/tags/not_exists.sh "${CIX_REP_OWNER}" "${CIX_REP_NAME}" "${CIX_RELEASE_VERSION}"
 
 #
 
 echo "Get ref \"${CIX_RELEASE_VERSION}\"..."
 
 SUBJECT="${CIX_SHARED}/gh_${CIX_RELEASE_VERSION}_ref.json"
-#. $ghx/ref.sh "${VCS_REP_OWNER}" "${VCS_REP_NAME}" "tags/${CIX_RELEASE_VERSION}" "${SUBJECT}" # todo
-
-GITHUBX_API='https://api.github.com'
-GITHUBX_API_VERSION='2026-03-10'
-HTTP_CODE=$(curl -m 8 -w '%{http_code}' \
- "${GITHUBX_API}/repos/${VCS_REP_OWNER}/${VCS_REP_NAME}/git/ref/tags/${CIX_RELEASE_VERSION}" \
- --url-query "salt=${RANDOM}" \
- --header 'Accept: application/vnd.github+json' \
- --header "X-GitHub-Api-Version: ${GITHUBX_API_VERSION}" \
- -o "${SUBJECT}" 2>/dev/null)
-
-if [[ $? -ne 0 ]]; then
- echo 'Request error!' >&2; exit 1
-elif [[ "${HTTP_CODE}" != '200' ]]; then
- echo 'Response error!' >&2; exit 1
-fi
+. $ghx/ref.sh "${CIX_REP_OWNER}" "${CIX_REP_NAME}" "tags/${CIX_RELEASE_VERSION}" "${SUBJECT}" "${RANDOM}"
 
 CIX_REF_TYPE="$(yq -Mer '.object.type' "${SUBJECT}" 2> /dev/null)" \
  || . $checks/fail.sh 'Get ref type error!'
@@ -48,7 +53,7 @@ CIX_REF_SHA="$(yq -Mer '.object.sha' "${SUBJECT}" 2> /dev/null)" \
 echo "Get tag \"${CIX_RELEASE_VERSION}\"..."
 
 SUBJECT="${CIX_SHARED}/gh_${CIX_RELEASE_VERSION}_tag.json"
-. $ghx/tag.sh "${VCS_REP_OWNER}" "${VCS_REP_NAME}" "${CIX_REF_SHA}" "${SUBJECT}"
+. $ghx/tag.sh "${CIX_REP_OWNER}" "${CIX_REP_NAME}" "${CIX_REF_SHA}" "${SUBJECT}"
 
 CIX_TAG_VERIFIED="$(yq -Me '.verification.verified' "${SUBJECT}" 2> /dev/null)" \
  && $checks/strings/eq.sh "${CIX_TAG_VERIFIED}" 'true' \
@@ -68,4 +73,4 @@ CIX_RESULT_COMMIT="$(yq -Mer '.sha' "${SUBJECT}" 2> /dev/null)" \
 echo "Release \"${CIX_RELEASE_VERSION}\"..."
 
 SUBJECT="${CIX_SHARED}/gh_${CIX_RELEASE_VERSION}_release.json"
-. $ghx/release.sh "${VCS_REP_OWNER}" "${VCS_REP_NAME}" GITHUB_WORKER_PAT "${CIX_RESULT_COMMIT}" "${CIX_RELEASE_VERSION}" "${CIX_RELEASE_MESSAGE}" "${CIX_IS_PRERELEASE}" "${SUBJECT}"
+. $ghx/release.sh "${CIX_REP_OWNER}" "${CIX_REP_NAME}" "${CIX_WORKER_PAT_SRC}" "${CIX_RESULT_COMMIT}" "${CIX_RELEASE_VERSION}" "${CIX_RELEASE_MESSAGE}" "${CIX_IS_PRERELEASE}" "${SUBJECT}"

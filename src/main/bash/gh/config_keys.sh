@@ -1,16 +1,25 @@
 #!/usr/local/bin/bash
 
-. $checks/ints/eq.sh $# 3 'Wrong arguments!'
+unset CIX_WORKER_KEY_ID
+unset CIX_WORKER_EMAIL
 
-CIX_WORKER_KEY_ID="$1"
-CIX_WORKER_KEY="$2"
-CIX_WORKER_EMAIL="$3"
+while [[ $# -gt 0 ]]; do
+ . $checks/ints/gt.sh $# 1 'Wrong flags!'
+ case "$1" in
+  '--worker_key_id') [[ -v CIX_WORKER_KEY_ID ]] && . $checks/fail.sh "\"$1\" already used!"
+   CIX_WORKER_KEY_ID="$2"; shift 2;;
+  '--worker_email') [[ -v CIX_WORKER_EMAIL ]] && . $checks/fail.sh "\"$1\" already used!"
+   CIX_WORKER_EMAIL="$2"; shift 2;;
+  *) . $checks/fail.sh "\"$1\" is not supported!";;
+ esac
+done
 
-. $checks/strings/require.sh CIX_WORKER_KEY_ID CIX_WORKER_KEY CIX_WORKER_EMAIL
+. $checks/strings/require.sh CIX_WORKER_KEY_ID CIX_WORKER_EMAIL
 
+CIX_WORKER_KEY="${CIX_SHARED}/key.gpg"
 . $checks/files/not_empty.sh "${CIX_WORKER_KEY}"
 
-CIX_FILE_KEYS=($(gpg --show-keys --quiet --keyid-format long --with-colons "${CIX_WORKER_KEY}" | grep sec)) \
+CIX_FILE_KEYS=($(gpg --homedir "${CIX_SHARED}/.gnupg" --show-keys --quiet --keyid-format long --with-colons "${CIX_WORKER_KEY}" | grep sec)) \
  && $checks/ints/eq.sh "${#CIX_FILE_KEYS[@]}" 1 \
  || . $checks/fail.sh 'Get file keys error!'
 
@@ -21,21 +30,21 @@ CIX_FILE_KEY_ID="${CIX_FILE_KEYS[4]}"
 
 #
 
-gpg --batch --quiet --import "${CIX_WORKER_KEY}" \
+gpg --homedir "${CIX_SHARED}/.gnupg" --batch --quiet --import "${CIX_WORKER_KEY}" \
  || . $checks/fail.sh 'GPG import error!'
 
-CIX_ACTUAL_KEYS=($(gpg --list-keys --quiet --keyid-format long --with-colons | grep pub)) \
+CIX_ACTUAL_KEYS=($(gpg --homedir "${CIX_SHARED}/.gnupg" --list-keys --quiet --keyid-format long --with-colons | grep pub)) \
  && $checks/ints/eq.sh "${#CIX_ACTUAL_KEYS[@]}" 1 \
- || . $checks/fail.sh 'Get file keys error!'
+ || . $checks/fail.sh 'Get actual keys error!'
 
 CIX_ACTUAL_KEYS="${CIX_ACTUAL_KEYS[0]}"
 CIX_ACTUAL_KEYS=(${CIX_ACTUAL_KEYS//:/ })
 CIX_ACTUAL_KEY_ID="${CIX_ACTUAL_KEYS[4]}"
-. $checks/strings/eq.sh "${CIX_WORKER_KEY_ID}" "${CIX_ACTUAL_KEY_ID}" 'Wrong GPG key!'
+. $checks/strings/eq.sh "${CIX_WORKER_KEY_ID}" "${CIX_ACTUAL_KEY_ID}" 'Wrong actual key!'
 
 #
 
-CIX_GPG_UIDS="$(gpg --list-keys --quiet --keyid-format long --with-colons | grep uid)" \
+CIX_GPG_UIDS="$(gpg --homedir "${CIX_SHARED}/.gnupg" --list-keys --quiet --keyid-format long --with-colons | grep uid)" \
  && $checks/strings/contains.sh "${CIX_GPG_UIDS}" "${CIX_WORKER_EMAIL}" \
  || . $checks/fail.sh 'Wrong GPG email!'
 

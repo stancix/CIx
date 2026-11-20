@@ -5,48 +5,52 @@ A few continuous integration scripts.
 
 ## Release
 
-`0.0.1`
-| [GitHub](https://github.com/stancix/CIx/releases/tag/0.0.1)
-| [Key](https://stancix.github.io/release-public.pem)
+`0.3.2`
+| [GitHub](https://github.com/stancix/CIx/releases/tag/0.3.2)
+| [Key](https://stanprojects.github.io/src/main/res/stanprojects_release.pub)
 
 ### Build and Install
 
 ```
-$ ./assemble.sh \
- && ./src/test/bash/unit_test.sh \
- && unzip -d /opt/CIx-0.0.1 ./build/zip/CIx-0.0.1.zip
+./assemble.sh --build_variant 'release' \
+ && ./src/test/bash/checks.sh --build_variant 'release' \
+ && mkdir '/opt/CIx-0.3.2/' \
+ && tar -xf './build/tar/CIx-0.3.2.tar.gz' -C '/opt/CIx-0.3.2/'
 ```
 
 ### Download and Install
 
 ```
-$ TMP_PATH="$(mktemp)"; \
- curl -L 'https://github.com/stancix/CIx/releases/download/0.0.1/CIx-0.0.1.zip' \
-  -o "${TMP_PATH}" && unzip -d /opt/CIx-0.0.1 "${TMP_PATH}" && rm "${TMP_PATH}"
+TMP_PATH="$(mktemp)" \
+ && curl -m 32 -f -L 'https://github.com/stancix/CIx/releases/download/0.3.2/CIx-0.3.2.tar.gz' -o "${TMP_PATH}" \
+ && mkdir '/opt/CIx-0.3.2/' \
+ && tar -xf "${TMP_PATH}" -C '/opt/CIx-0.3.2/' && rm "${TMP_PATH}"
 ```
 
 ---
 
 ## Unstable
 
-`0.0.2-UNSTABLE`
-| [GitHub](https://github.com/stancix/CIx/releases/tag/0.0.2-UNSTABLE)
-| [Key](https://stancix.github.io/debug-public.pem)
+`0.3.1-UNSTABLE`
+| [GitHub](https://github.com/stancix/CIx/releases/tag/0.3.1-UNSTABLE)
+| [Key](https://stanprojects.github.io/src/main/res/stanprojects_debug.pub)
 
 ### Build and Install
 
 ```
-$ ./assemble.sh 'unstable' \
- && ./src/test/bash/checks.sh 'unstable' \
- && unzip -d /opt/CIx-0.0.2-UNSTABLE ./build/zip/CIx-0.0.2-UNSTABLE.zip
+./assemble.sh --build_variant 'unstable' \
+ && ./src/test/bash/checks.sh --build_variant 'unstable' \
+ && mkdir '/opt/CIx-0.3.1-UNSTABLE/' \
+ && tar -xf './build/tar/CIx-0.3.1-UNSTABLE.tar.gz' -C '/opt/CIx-0.3.1-UNSTABLE/'
 ```
 
 ### Download and Install
 
 ```
-$ TMP_PATH="$(mktemp)"; \
- curl -L 'https://github.com/stancix/CIx/releases/download/0.0.2-UNSTABLE/CIx-0.0.2-UNSTABLE.zip' \
-  -o "${TMP_PATH}" && unzip -d /opt/CIx-0.0.2-UNSTABLE "${TMP_PATH}" && rm "${TMP_PATH}"
+TMP_PATH="$(mktemp)" \
+ && curl -m 32 -f -L 'https://github.com/stancix/CIx/releases/download/0.3.1-UNSTABLE/CIx-0.3.1-UNSTABLE.tar.gz' -o "${TMP_PATH}" \
+ && mkdir '/opt/CIx-0.3.1-UNSTABLE/' \
+ && tar -xf "${TMP_PATH}" -C '/opt/CIx-0.3.1-UNSTABLE/' && rm "${TMP_PATH}"
 ```
 
 ---

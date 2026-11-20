@@ -6,31 +6,30 @@ on:
 jobs:
   build:
     runs-on: ubuntu-24.04
+    container:
+      image: docker.io/kepocnhh/cix-bash-amd64@sha256:fbad2399f9972461b72833f420a0bfa2ab7367a9bd28b83a87dd14e8abee4649
+    defaults:
+      run:
+        working-directory: /.cix/workdir
+    env:
+      BUILD_VARIANT: 'release'
+      GH_WORKER_PAT: '${{secrets.GH_WORKER_PAT}}'
+      GPG_PASSWORD: '${{secrets.GPG_PASSWORD}}'
+      SIGNING_ALIAS: 'release'
+      SIGNING_PASSWORD: '${{secrets.SIGNING_PASSWORD_RELEASE}}'
+      VCS_DST_BRANCH: '${{github.event.pull_request.base.ref}}'
+      VCS_DST_COMMIT: '${{github.event.pull_request.base.sha}}'
+      VCS_REP_NAME: '${{github.event.repository.name}}'
+      VCS_REP_OWNER: '${{github.event.repository.owner.login}}'
+      VCS_SRC_COMMIT: '${{github.event.pull_request.head.sha}}'
+      WORKER_BOT_ID: '${{secrets.WORKER_BOT_ID}}'
+      WORKER_BOT_SECRET: '${{secrets.WORKER_BOT_SECRET}}'
+      WORKER_CHAT_ID: '${{secrets.WORKER_CHAT_ID}}'
     steps:
       - env:
-          DOCKER_IMAGE: 'docker.io/kepocnhh/multitool-bash-amd64'
-          DOCKER_IMAGE_DIGEST: '26d76dbb3324f7e43f01c218064ed33101368375a36654a13bb18ed59b5175f7'
-          KEYSTORE_PASSWORD: "${{secrets.KEYSTORE_RELEASE_PASSWORD}}"
-          GPG_PASSWORD: "${{secrets.GPG_PASSWORD}}"
+          GPG_WORKER_KEY: '${{secrets.GPG_WORKER_KEY}}'
+          SIGNING_KEYS: '${{secrets.SIGNING_KEYS_RELEASE}}'
         run: |
-          docker run \
-           -e REPOSITORY_OWNER='${{github.event.repository.owner.login}}' \
-           -e REPOSITORY_NAME='${{github.event.repository.name}}' \
-           -e SOURCE_COMMIT='${{github.event.pull_request.head.sha}}' \
-           -e TARGET_BRANCH='${{github.event.pull_request.base.ref}}' \
-           -e TARGET_COMMIT='${{github.event.pull_request.base.sha}}' \
-           -e VCS_PAT='${{secrets.VCS_PAT}}' \
-           -e KEYSTORE='.mt/keystore.pkcs12' \
-           -e KEYSTORE_PASSWORD="${KEYSTORE_PASSWORD}" \
-           -e KEY_ALIAS='release' \
-           -e TG_BOT_ID='${{secrets.TG_BOT_ID}}' \
-           -e TG_BOT_TOKEN='${{secrets.TG_BOT_TOKEN}}' \
-           -e TG_CHAT_ID='${{secrets.TG_CHAT_ID}}' \
-           -e GPG_KEY='.mt/key.gpg' \
-           -e GPG_PASSWORD="${GPG_PASSWORD}" \
-           -id --name container "${DOCKER_IMAGE}@sha256:${DOCKER_IMAGE_DIGEST}"
-          docker exec container /usr/local/bin/bash -c 'echo "${{secrets.KEYSTORE_RELEASE}}" | base64 -d > ${KEYSTORE}'
-          docker exec container /usr/local/bin/bash -c 'echo "${{secrets.GPG_KEY}}" > "${GPG_KEY}"'
-          docker exec container /usr/local/bin/bash -c '$mt/bash/pr.sh'
-      - if: always()
-        run: docker rm -f container || true
+          printf '%s' "${SIGNING_KEYS}" | base64 -d > "${CIX_SHARED}/${SIGNING_ALIAS}.pkcs12"
+          printf '%s' "${GPG_WORKER_KEY}" > ${CIX_SHARED}/key.gpg
+      - run: $cix/bash/pr.sh
