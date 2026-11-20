@@ -22,11 +22,11 @@ echo 'Merge...'
 
 echo 'Assemble...'
 
-. $cix/bash/assemble.sh --rep_owner "${VCS_REP_OWNER}" --rep_name "${VCS_REP_NAME}" --build_variant 'unstable' --signing_alias "${SIGNING_ALIAS}"
+. $cix/bash/assemble.sh --rep_owner "${VCS_REP_OWNER}" --rep_name "${VCS_REP_NAME}" --build_variant "${BUILD_VARIANT}" --signing_alias "${SIGNING_ALIAS}"
 
 echo 'Checks...'
 
-. $cix/bash/checks.sh --build_variant 'unstable'
+. $cix/bash/checks.sh --build_variant "${BUILD_VARIANT}"
 
 echo 'Commit...'
 

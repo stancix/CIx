@@ -3,7 +3,7 @@
 REP_GROUP='stanprojects'
 REP_OWNER='stancix'
 REP_NAME='CIx'
-VERSION_NAME='0.2.3'
+VERSION_NAME='0.3.0'
 
 unset BUILD_VARIANT
 unset BUILD_WORKDIR
