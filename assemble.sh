@@ -3,14 +3,13 @@
 REP_GROUP='stanprojects'
 REP_OWNER='stancix'
 REP_NAME='CIx'
-VERSION_NAME='0.2.1'
+VERSION_NAME='0.2.2'
 
 unset BUILD_VARIANT
 unset BUILD_WORKDIR
 
 while [[ $# -gt 0 ]]; do
- if [[ $# -lt 2 ]]; then
-  echo 'Wrong flags!' >&2; exit 1; fi
+ if [[ $# -lt 2 ]]; then echo 'Wrong flags!' >&2; exit 1; fi
  case "$1" in
   '--build_variant')
    if [[ -v BUILD_VARIANT ]]; then echo "\"$1\" already used!" >&2; exit 1; fi
@@ -27,6 +26,8 @@ done
 case "${BUILD_VARIANT}" in
  'unstable') BUILD_VERSION="${VERSION_NAME}-UNSTABLE"
   SIGNING_ALIAS='debug';;
+ 'release') BUILD_VERSION="${VERSION_NAME}"
+  SIGNING_ALIAS='release';;
  '') echo 'No build variant!' >&2; exit 1;;
  *) echo "Build variant \"${BUILD_VARIANT}\" is not supported!" >&2; exit 1;;
 esac
@@ -84,6 +85,6 @@ if [[ ! -s "${BUILD_WORKDIR}/README.md" ]]; then
 mkdir -p "${BUILD_WORKDIR}/build/tar/"
 SUBJECT="${BUILD_WORKDIR}/build/tar/${REP_NAME}-${BUILD_VERSION}.tar.gz"
 
-(set -x; cd "${BUILD_WORKDIR}" \
+(BASH_XTRACEFD=1; set -x; cd "${BUILD_WORKDIR}" \
  && tar -czf "${SUBJECT}" './src/main/bash/' './LICENSE' './README.md')
 if [[ $? != 0 ]]; then echo "Tar ${REP_NAME}-${BUILD_VERSION} error!" >&2; exit 1; fi
