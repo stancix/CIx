@@ -5,8 +5,8 @@ A few continuous integration scripts.
 
 ## Release
 
-`0.3.2`
-| [GitHub](https://github.com/stancix/CIx/releases/tag/0.3.2)
+`0.3.3`
+| [GitHub](https://github.com/stancix/CIx/releases/tag/0.3.3)
 | [Key](https://stanprojects.github.io/src/main/res/stanprojects_release.pub)
 
 ### Build and Install
@@ -14,17 +14,17 @@ A few continuous integration scripts.
 ```
 ./assemble.sh --build_variant 'release' \
  && ./src/test/bash/checks.sh --build_variant 'release' \
- && mkdir '/opt/CIx-0.3.2/' \
- && tar -xf './build/tar/CIx-0.3.2.tar.gz' -C '/opt/CIx-0.3.2/'
+ && mkdir '/opt/CIx-0.3.3/' \
+ && tar -xf './build/tar/CIx-0.3.3.tar.gz' -C '/opt/CIx-0.3.3/'
 ```
 
 ### Download and Install
 
 ```
 TMP_PATH="$(mktemp)" \
- && curl -m 32 -f -L 'https://github.com/stancix/CIx/releases/download/0.3.2/CIx-0.3.2.tar.gz' -o "${TMP_PATH}" \
- && mkdir '/opt/CIx-0.3.2/' \
- && tar -xf "${TMP_PATH}" -C '/opt/CIx-0.3.2/' && rm "${TMP_PATH}"
+ && curl -m 32 -f -L 'https://github.com/stancix/CIx/releases/download/0.3.3/CIx-0.3.3.tar.gz' -o "${TMP_PATH}" \
+ && mkdir '/opt/CIx-0.3.3/' \
+ && tar -xf "${TMP_PATH}" -C '/opt/CIx-0.3.3/' && rm "${TMP_PATH}"
 ```
 
 ---
